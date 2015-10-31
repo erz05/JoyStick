@@ -18,8 +18,20 @@ android {
     }
 }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.0'
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.3.4'
+    }
+}
+
+publish {
+    userOrg = 'erz05'
+    groupId = 'com.github.erz05'
+    artifactId = 'JoyStick'
+    version = '1.0.0'
+    description = 'Android Library for JoyStick View'
+    website = 'https://github.com/erz05/JoyStick'
 }
