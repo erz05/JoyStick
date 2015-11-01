@@ -11,7 +11,7 @@ Its customizable, small and lightweight.
 
 <H2>Images: Sample App</H2>
 <img width="300px" src="https://github.com/erz05/JoyStick/blob/master/images/Screenshot_2015-10-30-21-38-13.png" />
-<br>
+<br><br>
 <img width="300px" src="https://github.com/erz05/JoyStick/blob/master/images/Screenshot_2015-10-30-21-43-47.png" />
 <br>
 
