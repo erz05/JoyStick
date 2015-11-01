@@ -4,6 +4,8 @@ Its customizable, small and lightweight.
 
 [ ![Download](https://api.bintray.com/packages/erz05/maven/JoyStick/images/download.svg) ](https://bintray.com/erz05/maven/JoyStick/_latestVersion)
 
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-JoyStick-blue.svg?style=flat)](http://android-arsenal.com/details/1/2712)
+
 <a href="https://play.google.com/store/apps/details?id=com.erz.joystick">
   <img alt="Get it on Google Play"
        src="https://developer.android.com/images/brand/en_generic_rgb_wo_45.png" />
