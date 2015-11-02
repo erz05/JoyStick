@@ -62,15 +62,18 @@ joyStick.setButtonColor(Color.RED);
 //Get Power
 joyStick.getPower();
 
-//Get Radians
-joyStick.getRadians();
+//Get Angle
+joyStick.getAngle();
+
+//Get Angle in Degrees
+joyStick.getAngleDegrees();
 
 //Set JoyStickListener
 joyStick.setListener(this);
 
 //JoyStickListener Interface
 public interface JoyStickListener {
-        void onMove(double radians, double power);
+        void onMove(JoyStick joyStick, double angle, double power);
 }
 ```
 <H2>License</H2>
