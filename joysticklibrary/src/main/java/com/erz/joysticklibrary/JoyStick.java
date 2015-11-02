@@ -40,14 +40,14 @@ public class JoyStick extends View {
     float radius;
     float buttonRadius;
     double power;
-    double radians;
+    double angle;
     int padColor;
     int buttonColor;
     Paint paint;
     JoyStickListener listener;
 
     public interface JoyStickListener {
-        void onMove(double radians, double power);
+        void onMove(JoyStick joyStick, double angle, double power);
     }
 
     public JoyStick(Context context) {
@@ -116,7 +116,7 @@ public class JoyStick extends View {
                     posY = ((posY - centerY) * radius / abs + centerY);
                 }
 
-                radians = Math.atan2(centerY - posY, centerX - posX);
+                angle = Math.atan2(centerY - posY, centerX - posX);
 
                 power = (100 * Math.sqrt((posX - centerX)
                         * (posX - centerX) + (posY - centerY)
@@ -128,14 +128,14 @@ public class JoyStick extends View {
             case MotionEvent.ACTION_CANCEL:
                 posX = centerX;
                 posY = centerY;
-                radians = 0;
+                angle = 0;
                 power = 0;
                 invalidate();
                 break;
         }
 
         if (listener != null) {
-            listener.onMove(radians, power);
+            listener.onMove(this, angle, power);
         }
         return true;
     }
@@ -158,7 +158,11 @@ public class JoyStick extends View {
         return power;
     }
 
-    public double getRadians() {
-        return radians;
+    public double getAngle() {
+        return angle;
+    }
+
+    public double getAngleDegrees() {
+        return Math.toDegrees(angle);
     }
 }

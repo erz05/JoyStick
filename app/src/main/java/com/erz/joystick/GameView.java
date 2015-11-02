@@ -44,10 +44,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     RectF rectF;
     float rotate;
 
-    double radians;
+    double angle;
     double power;
 
-    double radians2;
+    double angle2;
 
     Vector<Star> stars;
 
@@ -83,15 +83,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
 
-        posX -= Math.cos(radians) * (power/2);
-        posY += Math.sin(-radians) * (power/2);
+        posX -= Math.cos(angle) * (power/2);
+        posY += Math.sin(-angle) * (power/2);
         if (posX > width - radius) posX = width - radius;
         if (posX < radius) posX = radius;
         if (posY > height - radius) posY = height - radius;
         if (posY < radius) posY = radius;
 
-        if (radians2 == 0) rotate = 0;
-        else rotate = (float) Math.toDegrees(radians2) - 90;
+        if (angle2 == 0) rotate = 0;
+        else rotate = (float) Math.toDegrees(angle2) - 90;
         canvas.rotate(rotate, posX, posY);
         rectF.set(posX - radius, posY - radius, posX + radius, posY + radius);
         canvas.drawBitmap(droid, null, rectF, paint);
@@ -143,12 +143,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         gameLoop = null;
     }
 
-    public void move(double radians, double power) {
-        this.radians = radians;
+    public void move(double angle, double power) {
+        this.angle = angle;
         this.power = power;
     }
 
-    public void rotate(double radians) {
-        this.radians2 = radians;
+    public void rotate(double angle2) {
+        this.angle2 = angle2;
     }
 }

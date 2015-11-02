@@ -18,17 +18,18 @@ public class MainActivity extends AppCompatActivity implements JoyStick.JoyStick
         ((JoyStick)findViewById(R.id.joy1)).setListener(this);
         ((JoyStick)findViewById(R.id.joy1)).setPadColor(Color.parseColor("#55ffffff"));
         ((JoyStick)findViewById(R.id.joy1)).setButtonColor(Color.parseColor("#55ff0000"));
-
-        ((JoyStick)findViewById(R.id.joy2)).setListener(new JoyStick.JoyStickListener() {
-            @Override
-            public void onMove(double radians, double power) {
-                gameView.rotate(radians);
-            }
-        });
+        ((JoyStick)findViewById(R.id.joy2)).setListener(this);
     }
 
     @Override
-    public void onMove(double radians, double power) {
-        gameView.move(radians, power);
+    public void onMove(JoyStick joyStick, double angle, double power) {
+        switch (joyStick.getId()) {
+            case R.id.joy1:
+                gameView.move(angle, power);
+                break;
+            case R.id.joy2:
+                gameView.rotate(angle);
+                break;
+        }
     }
 }
