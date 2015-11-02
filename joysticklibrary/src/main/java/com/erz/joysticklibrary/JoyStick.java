@@ -18,9 +18,12 @@ package com.erz.joysticklibrary;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +33,8 @@ import android.view.View;
  */
 public class JoyStick extends View {
 
+    JoyStickListener listener;
+    Paint paint;
     float width;
     float height;
     float centerX;
@@ -39,12 +44,33 @@ public class JoyStick extends View {
     float posY;
     float radius;
     float buttonRadius;
-    double power;
-    double angle;
+    double power = -1;
+    double angle = -1;
+    RectF temp;
+
+    //Background Color
     int padColor;
+
+    //Stick Color
     int buttonColor;
-    Paint paint;
-    JoyStickListener listener;
+
+    //Keeps joystick in last position
+    boolean stayPut;
+
+    //Button Size percentage of the minimum(width, height)
+    int percentage = 25;
+
+    //Background Bitmap
+    Bitmap padBGBitmap = null;
+
+    //Button Bitmap
+    Bitmap buttonBitmap = null;
+
+    //Background Alpha
+    int padAlpha = 255;
+
+    //Button Alpha
+    int buttonAlpha = 255;
 
     public interface JoyStickListener {
         void onMove(JoyStick joyStick, double angle, double power);
@@ -65,14 +91,33 @@ public class JoyStick extends View {
         paint.setStyle(Paint.Style.FILL);
         paint.setAntiAlias(true);
 
-        padColor = Color.BLACK;
+        temp = new RectF();
+
+        padColor = Color.WHITE;
         buttonColor = Color.RED;
 
         if (attrs != null) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.JoyStick);
             if (typedArray != null) {
-                padColor = typedArray.getColor(R.styleable.JoyStick_padColor, Color.BLACK);
+                padColor = typedArray.getColor(R.styleable.JoyStick_padColor, Color.WHITE);
                 buttonColor = typedArray.getColor(R.styleable.JoyStick_buttonColor, Color.RED);
+                stayPut = typedArray.getBoolean(R.styleable.JoyStick_stayPut, false);
+                percentage = typedArray.getInt(R.styleable.JoyStick_percentage, 25);
+                if (percentage > 50) percentage = 50;
+                if (percentage < 25) percentage = 25;
+
+                int padResId = typedArray.getResourceId(R.styleable.JoyStick_backgroundDrawable, -1);
+                int buttonResId = typedArray.getResourceId(R.styleable.JoyStick_buttonDrawable, -1);
+
+                if (padResId > 0) {
+                    padBGBitmap = BitmapFactory.decodeResource(getResources(), padResId);
+                }
+                if (buttonResId > 0) {
+                    buttonBitmap = BitmapFactory.decodeResource(getResources(), buttonResId);
+                }
+
+                padAlpha = typedArray.getInt(R.styleable.JoyStick_backgroundAlpha, 255);
+                buttonAlpha = typedArray.getInt(R.styleable.JoyStick_buttonAlpha, 255);
                 typedArray.recycle();
             }
         }
@@ -88,7 +133,7 @@ public class JoyStick extends View {
         min = Math.min(width, height);
         posX = centerX;
         posY = centerY;
-        buttonRadius = (min / 2 * 0.25f);
+        buttonRadius = (min / 2f * (percentage/100f));
         radius = (min / 2 * 0.75f);
     }
 
@@ -96,10 +141,22 @@ public class JoyStick extends View {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         if (canvas == null) return;
-        paint.setColor(padColor);
-        canvas.drawCircle(centerX, centerY, radius, paint);
-        paint.setColor(buttonColor);
-        canvas.drawCircle(posX, posY, buttonRadius, paint);
+        if (padBGBitmap == null) {
+            paint.setColor(padColor);
+            canvas.drawCircle(centerX, centerY, radius, paint);
+        } else {
+            paint.setAlpha(padAlpha);
+            temp.set(posX - radius, posY - radius, posX + radius, posY + radius);
+            canvas.drawBitmap(padBGBitmap, null, temp, paint);
+        }
+        if (buttonBitmap == null) {
+            paint.setColor(buttonColor);
+            canvas.drawCircle(posX, posY, buttonRadius, paint);
+        } else {
+            paint.setAlpha(buttonAlpha);
+            temp.set(posX - buttonRadius, posY - buttonRadius, posX + buttonRadius, posY + buttonRadius);
+            canvas.drawBitmap(buttonBitmap, null, temp, paint);
+        }
     }
 
     @Override
@@ -126,11 +183,13 @@ public class JoyStick extends View {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                posX = centerX;
-                posY = centerY;
-                angle = 0;
-                power = 0;
-                invalidate();
+                if (!stayPut) {
+                    posX = centerX;
+                    posY = centerY;
+                    angle = 0;
+                    power = 0;
+                    invalidate();
+                }
                 break;
         }
 
@@ -142,12 +201,10 @@ public class JoyStick extends View {
 
     public void setPadColor(int padColor) {
         this.padColor = padColor;
-        invalidate();
     }
 
     public void setButtonColor(int buttonColor) {
         this.buttonColor = buttonColor;
-        invalidate();
     }
 
     public void setListener(JoyStickListener listener) {
@@ -164,5 +221,37 @@ public class JoyStick extends View {
 
     public double getAngleDegrees() {
         return Math.toDegrees(angle);
+    }
+
+    public void enableStayPut(boolean enable) {
+        this.stayPut = enable;
+    }
+
+    //size of button is a percentage of the minimum(width, height)
+    //percentage must be between 25 - 50
+    public void setButtonSize(int p) {
+        percentage = p;
+        if (percentage > 50) percentage = 50;
+        if (percentage < 25) percentage = 25;
+    }
+
+    public void setPadBackground(int resId) {
+        this.padBGBitmap = BitmapFactory.decodeResource(getResources(), resId);
+    }
+
+    public void setButtonDrawable(int resId) {
+        this.buttonBitmap = BitmapFactory.decodeResource(getResources(), resId);
+    }
+
+    public void setBackgroundAlpha(int alpha) {
+        padAlpha = alpha;
+        if (padAlpha > 255) padAlpha = 255;
+        if (padAlpha < 0) padAlpha = 0;
+    }
+
+    public void setButtonAlpha(int alpha) {
+        buttonAlpha = alpha;
+        if (buttonAlpha > 255) buttonAlpha = 255;
+        if (buttonAlpha < 0) buttonAlpha = 0;
     }
 }

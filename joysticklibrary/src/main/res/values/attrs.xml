@@ -3,5 +3,11 @@
     <declare-styleable name="JoyStick">
         <attr name="padColor" format="color" />
         <attr name="buttonColor" format="color" />
+        <attr name="stayPut" format="boolean" />
+        <attr name="percentage" format="integer" />
+        <attr name="backgroundDrawable" format="reference" />
+        <attr name="buttonDrawable" format="reference" />
+        <attr name="backgroundAlpha" format="integer" />
+        <attr name="buttonAlpha" format="integer" />
     </declare-styleable>
 </resources>
