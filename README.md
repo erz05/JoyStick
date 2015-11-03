@@ -1,6 +1,7 @@
 # JoyStick
 Android Library for JoyStick View.<br>
-Its customizable, small and lightweight.
+Its customizable, small and lightweight.<br>
+Change Background/Button Color, use image for Background/Button.
 
 [ ![Download](https://api.bintray.com/packages/erz05/maven/JoyStick/images/download.svg) ](https://bintray.com/erz05/maven/JoyStick/_latestVersion)
 
@@ -15,6 +16,9 @@ Its customizable, small and lightweight.
 <img width="300px" src="https://github.com/erz05/JoyStick/blob/master/images/Screenshot_2015-10-30-21-38-13.png" />
 <br><br>
 <img width="300px" src="https://github.com/erz05/JoyStick/blob/master/images/Screenshot_2015-10-30-21-43-47.png" />
+<br><br>
+JoyStick with Image for button<br>
+<img width="300px" src="https://github.com/erz05/JoyStick/blob/master/images/Screenshot_2015-11-02-18-05-49.png" />
 <br>
 
 <H2>Usage</H2>
@@ -26,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.erz05:JoyStick:1.0.0@aar'
+    compile 'com.github.erz05:JoyStick:1.0.2@aar'
 }
 ```
 
@@ -58,6 +62,18 @@ joyStick.setPadColor(Color.BLACK);
 
 //Set Button Color
 joyStick.setButtonColor(Color.RED);
+
+//Set Background Image
+joyStick.setPadBackground(resId);
+
+//Set Button Image
+joyStick.setButtonDrawable(resId);
+
+//Set Button Scale
+joyStick.setButtonRadiusScale(scale);
+
+//Enable Button to Stay Put
+joyStick.enableStayPut(enable);
 
 //Get Power
 joyStick.getPower();
