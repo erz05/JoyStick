@@ -137,7 +137,7 @@ public class JoyStick extends View {
             paint.setColor(padColor);
             canvas.drawCircle(centerX, centerY, radius, paint);
         } else {
-            temp.set(posX - radius, posY - radius, posX + radius, posY + radius);
+            temp.set(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
             canvas.drawBitmap(padBGBitmap, null, temp, paint);
         }
         if (buttonBitmap == null) {
@@ -219,8 +219,8 @@ public class JoyStick extends View {
 
     //size of button is a percentage of the minimum(width, height)
     //percentage must be between 25 - 50
-    public void setButtonSize(int p) {
-        percentage = p;
+    public void setButtonRadiusScale(int scale) {
+        percentage = scale;
         if (percentage > 50) percentage = 50;
         if (percentage < 25) percentage = 25;
     }

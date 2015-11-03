@@ -15,13 +15,16 @@ public class MainActivity extends AppCompatActivity implements JoyStick.JoyStick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         gameView = (GameView) findViewById(R.id.game);
-        ((JoyStick)findViewById(R.id.joy1)).setListener(this);
-        ((JoyStick)findViewById(R.id.joy1)).setPadColor(Color.parseColor("#55ffffff"));
-        ((JoyStick)findViewById(R.id.joy1)).setButtonColor(Color.parseColor("#55ff0000"));
-        ((JoyStick)findViewById(R.id.joy2)).setListener(this);
-        ((JoyStick)findViewById(R.id.joy2)).enableStayPut(true);
-        ((JoyStick)findViewById(R.id.joy2)).setButtonSize(50);
-        ((JoyStick)findViewById(R.id.joy2)).setButtonDrawable(R.drawable.droid);
+        JoyStick joy1 = (JoyStick) findViewById(R.id.joy1);
+        joy1.setListener(this);
+        joy1.setPadColor(Color.parseColor("#55ffffff"));
+        joy1.setButtonColor(Color.parseColor("#55ff0000"));
+
+        JoyStick joy2 = (JoyStick) findViewById(R.id.joy2);
+        joy2.setListener(this);
+        joy2.enableStayPut(true);
+        joy2.setPadBackground(R.drawable.pad);
+        joy2.setButtonDrawable(R.drawable.button);
     }
 
     @Override
