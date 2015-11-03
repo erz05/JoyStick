@@ -32,7 +32,7 @@ publish {
     userOrg = 'erz05'
     groupId = 'com.github.erz05'
     artifactId = 'JoyStick'
-    version = '1.0.1'
+    version = '1.0.2'
     description = 'Android Library for JoyStick View'
     website = 'https://github.com/erz05/JoyStick'
 }
