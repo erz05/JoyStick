@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity implements JoyStick.JoyStick
         ((JoyStick)findViewById(R.id.joy2)).enableStayPut(true);
         ((JoyStick)findViewById(R.id.joy2)).setButtonSize(50);
         ((JoyStick)findViewById(R.id.joy2)).setButtonDrawable(R.drawable.droid);
-        ((JoyStick)findViewById(R.id.joy2)).setButtonAlpha(100);
     }
 
     @Override

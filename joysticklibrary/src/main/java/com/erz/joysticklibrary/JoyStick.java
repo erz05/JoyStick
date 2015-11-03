@@ -66,12 +66,6 @@ public class JoyStick extends View {
     //Button Bitmap
     Bitmap buttonBitmap = null;
 
-    //Background Alpha
-    int padAlpha = 255;
-
-    //Button Alpha
-    int buttonAlpha = 255;
-
     public interface JoyStickListener {
         void onMove(JoyStick joyStick, double angle, double power);
     }
@@ -116,8 +110,6 @@ public class JoyStick extends View {
                     buttonBitmap = BitmapFactory.decodeResource(getResources(), buttonResId);
                 }
 
-                padAlpha = typedArray.getInt(R.styleable.JoyStick_backgroundAlpha, 255);
-                buttonAlpha = typedArray.getInt(R.styleable.JoyStick_buttonAlpha, 255);
                 typedArray.recycle();
             }
         }
@@ -134,7 +126,7 @@ public class JoyStick extends View {
         posX = centerX;
         posY = centerY;
         buttonRadius = (min / 2f * (percentage/100f));
-        radius = (min / 2 * 0.75f);
+        radius = (min / 2f * ((100f-percentage)/100f));
     }
 
     @Override
@@ -145,7 +137,6 @@ public class JoyStick extends View {
             paint.setColor(padColor);
             canvas.drawCircle(centerX, centerY, radius, paint);
         } else {
-            paint.setAlpha(padAlpha);
             temp.set(posX - radius, posY - radius, posX + radius, posY + radius);
             canvas.drawBitmap(padBGBitmap, null, temp, paint);
         }
@@ -153,7 +144,6 @@ public class JoyStick extends View {
             paint.setColor(buttonColor);
             canvas.drawCircle(posX, posY, buttonRadius, paint);
         } else {
-            paint.setAlpha(buttonAlpha);
             temp.set(posX - buttonRadius, posY - buttonRadius, posX + buttonRadius, posY + buttonRadius);
             canvas.drawBitmap(buttonBitmap, null, temp, paint);
         }
@@ -241,17 +231,5 @@ public class JoyStick extends View {
 
     public void setButtonDrawable(int resId) {
         this.buttonBitmap = BitmapFactory.decodeResource(getResources(), resId);
-    }
-
-    public void setBackgroundAlpha(int alpha) {
-        padAlpha = alpha;
-        if (padAlpha > 255) padAlpha = 255;
-        if (padAlpha < 0) padAlpha = 0;
-    }
-
-    public void setButtonAlpha(int alpha) {
-        buttonAlpha = alpha;
-        if (buttonAlpha > 255) buttonAlpha = 255;
-        if (buttonAlpha < 0) buttonAlpha = 0;
     }
 }

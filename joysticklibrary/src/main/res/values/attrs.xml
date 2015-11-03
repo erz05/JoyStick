@@ -7,7 +7,5 @@
         <attr name="percentage" format="integer" />
         <attr name="backgroundDrawable" format="reference" />
         <attr name="buttonDrawable" format="reference" />
-        <attr name="backgroundAlpha" format="integer" />
-        <attr name="buttonAlpha" format="integer" />
     </declare-styleable>
 </resources>
