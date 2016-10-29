@@ -33,38 +33,35 @@ import android.view.View;
  */
 public class JoyStick extends View {
 
-    JoyStickListener listener;
-    Paint paint;
-    float width;
-    float height;
-    float centerX;
-    float centerY;
-    float min;
-    float posX;
-    float posY;
-    float radius;
-    float buttonRadius;
-    double power = -1;
-    double angle = -1;
-    RectF temp;
+    private JoyStickListener listener;
+    private Paint paint;
+    private float centerX;
+    private float centerY;
+    private float posX;
+    private float posY;
+    private float radius;
+    private float buttonRadius;
+    private double power = -1;
+    private double angle = -1;
+    private RectF temp;
 
     //Background Color
-    int padColor;
+    private int padColor;
 
     //Stick Color
-    int buttonColor;
+    private int buttonColor;
 
     //Keeps joystick in last position
-    boolean stayPut;
+    private boolean stayPut;
 
     //Button Size percentage of the minimum(width, height)
-    int percentage = 25;
+    private int percentage = 25;
 
     //Background Bitmap
-    Bitmap padBGBitmap = null;
+    private Bitmap padBGBitmap = null;
 
     //Button Bitmap
-    Bitmap buttonBitmap = null;
+    private Bitmap buttonBitmap = null;
 
     public interface JoyStickListener {
         void onMove(JoyStick joyStick, double angle, double power);
@@ -118,11 +115,11 @@ public class JoyStick extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        width = MeasureSpec.getSize(widthMeasureSpec);
-        height = MeasureSpec.getSize(heightMeasureSpec);
+        float width = MeasureSpec.getSize(widthMeasureSpec);
+        float height = MeasureSpec.getSize(heightMeasureSpec);
         centerX = width / 2;
         centerY = height / 2;
-        min = Math.min(width, height);
+        float min = Math.min(width, height);
         posX = centerX;
         posY = centerY;
         buttonRadius = (min / 2f * (percentage / 100f));

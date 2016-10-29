@@ -8,12 +8,12 @@ import android.graphics.RectF;
  * Created by edgarramirez on 6/16/15.
  */
 public class Star {
-    public float x;
-    public float y;
-    public float speedY;
-    public float radius;
-    public boolean ready = false;
-    RectF rectF;
+    private float x;
+    private float y;
+    private float speedY;
+    private float radius;
+    private boolean ready = false;
+    private RectF rectF;
 
     public Star(float x, float y, float speedY, float radius) {
         this.x = x;
@@ -24,9 +24,9 @@ public class Star {
         rectF = new RectF();
     }
 
-    public void draw(Canvas canvas, Paint paint, float width, float height, float max) {
+    public void draw(Canvas canvas, Paint paint, float height, float max) {
         if (!ready) return;
-        update(width, height, max);
+        update(height, max);
 
         rectF.set(x - radius, y - radius, x + radius, y + radius);
 
@@ -34,7 +34,7 @@ public class Star {
         canvas.drawOval(rectF, paint);
     }
 
-    public void update(float width, float height, float max) {
+    public void update(float height, float max) {
         if (!ready) return;
         y += speedY;
 

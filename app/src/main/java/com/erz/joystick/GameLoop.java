@@ -7,13 +7,13 @@ import android.view.SurfaceView;
  * Created by edgarramirez on 7/17/15.
  */
 public class GameLoop extends Thread {
-    static final long FPS = 60;
-    static final long ticksPS = 1000 / FPS;
-    SurfaceView view;
-    boolean running = false;
-    long startTime;
-    long sleepTime;
-    Canvas canvas;
+    private static final long FPS = 60;
+    private static final long ticksPS = 1000 / FPS;
+    private SurfaceView view;
+    private boolean running = false;
+    private long startTime;
+    private long sleepTime;
+    private Canvas canvas;
 
     public GameLoop(SurfaceView view) {
         this.view = view;
