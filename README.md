@@ -7,7 +7,7 @@ Change Background/Button Color, use image for Background/Button.
 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-JoyStick-blue.svg?style=flat)](http://android-arsenal.com/details/1/2712)
 
-<a href="https://play.google.com/store/apps/details?id=com.erz.joystick&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-AC-global-none-all-co-pr-py-PartBadges-Oct1515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/apps/en-play-badge.png" /></a>
+<a href="https://play.google.com/store/apps/details?id=com.erz.joystick&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-AC-global-none-all-co-pr-py-PartBadges-Oct1515-1"><img height="75px" alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/apps/en-play-badge.png" /></a>
 
 <H2>Images: Sample App</H2>
 <img width="300px" src="https://github.com/erz05/JoyStick/blob/master/images/Screenshot_2015-10-30-21-38-13.png" />
