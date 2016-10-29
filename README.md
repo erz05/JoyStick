@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.erz05:JoyStick:1.0.2@aar'
+    compile 'com.github.erz05:JoyStick:1.0.3@aar'
 }
 ```
 

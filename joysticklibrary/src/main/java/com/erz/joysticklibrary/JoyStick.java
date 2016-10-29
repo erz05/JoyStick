@@ -120,13 +120,13 @@ public class JoyStick extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         width = MeasureSpec.getSize(widthMeasureSpec);
         height = MeasureSpec.getSize(heightMeasureSpec);
-        centerX = width/2;
-        centerY = height/2;
+        centerX = width / 2;
+        centerY = height / 2;
         min = Math.min(width, height);
         posX = centerX;
         posY = centerY;
-        buttonRadius = (min / 2f * (percentage/100f));
-        radius = (min / 2f * ((100f-percentage)/100f));
+        buttonRadius = (min / 2f * (percentage / 100f));
+        radius = (min / 2f * ((100f - percentage) / 100f));
     }
 
     @Override

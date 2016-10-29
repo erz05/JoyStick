@@ -78,13 +78,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawColor(Color.BLACK);
 
         if (stars != null && stars.size() > 0) {
-            for (i=0; i<size; i++) {
+            for (i = 0; i < size; i++) {
                 stars.get(i).draw(canvas, paint, width, height, maxRadius);
             }
         }
 
-        posX -= Math.cos(angle) * (power/2);
-        posY += Math.sin(-angle) * (power/2);
+        posX -= Math.cos(angle) * (power / 2);
+        posY += Math.sin(-angle) * (power / 2);
         if (posX > width - radius) posX = width - radius;
         if (posX < radius) posX = radius;
         if (posY > height - radius) posY = height - radius;
@@ -110,23 +110,23 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         this.height = height;
         min = Math.min(width, height);
 
-        centerX = width/2;
-        centerY = height/2;
+        centerX = width / 2;
+        centerY = height / 2;
         posX = centerX;
         posY = centerY;
-        radius = min/12;
+        radius = min / 12;
         rectF = new RectF(posX - radius, posY - radius, posX + radius, posY + radius);
 
-        minSpeed = (int) (min/75);
-        maxSpeed = (int) (min/25);
+        minSpeed = (int) (min / 75);
+        maxSpeed = (int) (min / 25);
 
-        minRadius = (int) (min/250);
-        maxRadius = (int) (min/220);
+        minRadius = (int) (min / 250);
+        maxRadius = (int) (min / 220);
 
         if (maxRadius == minRadius) maxRadius += minRadius;
 
         stars = new Vector<>();
-        for (i=0; i<size; i++) {
+        for (i = 0; i < size; i++) {
             tmpRadius = random.nextInt(maxRadius - minRadius) + minRadius;
             maxX = width - tmpRadius;
             maxY = height - tmpRadius;
