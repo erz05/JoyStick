@@ -84,7 +84,9 @@ public class JoyStick extends View implements GestureDetector.OnGestureListener,
 
     public interface JoyStickListener {
         void onMove(JoyStick joyStick, double angle, double power, int direction);
+
         void onTap();
+
         void onDoubleTap();
     }
 
@@ -175,6 +177,16 @@ public class JoyStick extends View implements GestureDetector.OnGestureListener,
             case MotionEvent.ACTION_MOVE:
                 posX = event.getX();
                 posY = event.getY();
+
+                if (type == TYPE_2_AXIS_LEFT_RIGHT) {
+                    posY = centerY;
+                } else if (type == TYPE_2_AXIS_UP_DOWN) {
+                    posX = centerX;
+                } else if (type == TYPE_4_AXIS) {
+                    if (Math.abs(posX - centerX) > Math.abs(posY - centerY)) posY = centerY;
+                    else posX = centerX;
+                }
+
                 float abs = (float) Math.sqrt((posX - centerX) * (posX - centerX)
                         + (posY - centerY) * (posY - centerY));
                 if (abs > radius) {
@@ -255,15 +267,25 @@ public class JoyStick extends View implements GestureDetector.OnGestureListener,
     }
 
     private static int calculateDirection(double degrees) {
-        if ((degrees >= 0 && degrees < 22.5) || (degrees < 0 && degrees > -22.5)) return DIRECTION_LEFT;
-        else if (degrees >= 22.5 && degrees < 67.5) return DIRECTION_LEFT_UP;
-        else if (degrees >= 67.5 && degrees < 112.5) return DIRECTION_UP;
-        else if (degrees >= 112.5 && degrees < 157.5) return DIRECTION_UP_RIGHT;
-        else if ((degrees >= 157.5 && degrees <= 180) || (degrees >= -180 && degrees < -157.5)) return DIRECTION_RIGHT;
-        else if (degrees >= -157.5 && degrees < -112.5) return DIRECTION_RIGHT_DOWN;
-        else if (degrees >= -112.5 && degrees < -67.5) return DIRECTION_DOWN;
-        else if (degrees >= -67.5 && degrees < -22.5) return DIRECTION_DOWN_LEFT;
-        else return DIRECTION_CENTER;
+        if ((degrees >= 0 && degrees < 22.5) || (degrees < 0 && degrees > -22.5)) {
+            return DIRECTION_LEFT;
+        } else if (degrees >= 22.5 && degrees < 67.5) {
+            return DIRECTION_LEFT_UP;
+        } else if (degrees >= 67.5 && degrees < 112.5) {
+            return DIRECTION_UP;
+        } else if (degrees >= 112.5 && degrees < 157.5) {
+            return DIRECTION_UP_RIGHT;
+        } else if ((degrees >= 157.5 && degrees <= 180) || (degrees >= -180 && degrees < -157.5)) {
+            return DIRECTION_RIGHT;
+        } else if (degrees >= -157.5 && degrees < -112.5) {
+            return DIRECTION_RIGHT_DOWN;
+        } else if (degrees >= -112.5 && degrees < -67.5) {
+            return DIRECTION_DOWN;
+        } else if (degrees >= -67.5 && degrees < -22.5) {
+            return DIRECTION_DOWN_LEFT;
+        } else {
+            return DIRECTION_CENTER;
+        }
     }
 
     public void setListener(JoyStickListener listener) {
