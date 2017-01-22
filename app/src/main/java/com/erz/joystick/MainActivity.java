@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements JoyStick.JoyStick
     }
 
     @Override
-    public void onMove(JoyStick joyStick, double angle, double power) {
+    public void onMove(JoyStick joyStick, double angle, double power, int direction) {
         switch (joyStick.getId()) {
             case R.id.joy1:
                 gameView.move(angle, power);

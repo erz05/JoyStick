@@ -33,19 +33,25 @@ import android.view.View;
  */
 public class JoyStick extends View {
 
-    public static final int CENTER = -1;
-    public static final int LEFT = 0;
-    public static final int LEFT_UP = 1;
-    public static final int UP = 2;
-    public static final int UP_RIGHT = 3;
-    public static final int RIGHT = 4;
-    public static final int RIGHT_DOWN = 5;
-    public static final int DOWN = 6;
-    public static final int DOWN_LEFT = 7;
+    public static final int DIRECTION_CENTER = -1;
+    public static final int DIRECTION_LEFT = 0;
+    public static final int DIRECTION_LEFT_UP = 1;
+    public static final int DIRECTION_UP = 2;
+    public static final int DIRECTION_UP_RIGHT = 3;
+    public static final int DIRECTION_RIGHT = 4;
+    public static final int DIRECTION_RIGHT_DOWN = 5;
+    public static final int DIRECTION_DOWN = 6;
+    public static final int DIRECTION_DOWN_LEFT = 7;
+
+    public static final int TYPE_8_AXIS = 11;
+    public static final int TYPE_4_AXIS = 22;
+    public static final int TYPE_2_AXIS_LEFT_RIGHT = 33;
+    public static final int TYPE_2_AXIS_UP_DOWN = 44;
 
     private JoyStickListener listener;
     private Paint paint;
-    private int direction = CENTER;
+    private int direction = DIRECTION_CENTER;
+    private int type = TYPE_8_AXIS;
     private float centerX;
     private float centerY;
     private float posX;
@@ -177,16 +183,7 @@ public class JoyStick extends View {
                         * (posX - centerX) + (posY - centerY)
                         * (posY - centerY)) / radius);
 
-                double degrees = Math.toDegrees(angle);
-                if ((degrees >= 0 && degrees < 22.5) || (degrees < 0 && degrees > -22.5)) direction = LEFT;
-                else if (degrees >= 22.5 && degrees < 67.5) direction = LEFT_UP;
-                else if (degrees >= 67.5 && degrees < 112.5) direction = UP;
-                else if (degrees >= 112.5 && degrees < 157.5) direction = UP_RIGHT;
-                else if ((degrees >= 157.5 && degrees <= 180) || (degrees >= -180 && degrees < -157.5)) direction = RIGHT;
-                else if (degrees >= -157.5 && degrees < -112.5) direction = RIGHT_DOWN;
-                else if (degrees >= -112.5 && degrees < -67.5) direction = DOWN;
-                else if (degrees >= -67.5 && degrees < -22.5) direction = DOWN_LEFT;
-                else direction = CENTER;
+                direction = calculateDirection(Math.toDegrees(angle));
 
                 invalidate();
                 break;
@@ -195,7 +192,7 @@ public class JoyStick extends View {
                 if (!stayPut) {
                     posX = centerX;
                     posY = centerY;
-                    direction = CENTER;
+                    direction = DIRECTION_CENTER;
                     angle = 0;
                     power = 0;
                     invalidate();
@@ -207,6 +204,18 @@ public class JoyStick extends View {
             listener.onMove(this, angle, power, direction);
         }
         return true;
+    }
+
+    private static int calculateDirection(double degrees) {
+        if ((degrees >= 0 && degrees < 22.5) || (degrees < 0 && degrees > -22.5)) return DIRECTION_LEFT;
+        else if (degrees >= 22.5 && degrees < 67.5) return DIRECTION_LEFT_UP;
+        else if (degrees >= 67.5 && degrees < 112.5) return DIRECTION_UP;
+        else if (degrees >= 112.5 && degrees < 157.5) return DIRECTION_UP_RIGHT;
+        else if ((degrees >= 157.5 && degrees <= 180) || (degrees >= -180 && degrees < -157.5)) return DIRECTION_RIGHT;
+        else if (degrees >= -157.5 && degrees < -112.5) return DIRECTION_RIGHT_DOWN;
+        else if (degrees >= -112.5 && degrees < -67.5) return DIRECTION_DOWN;
+        else if (degrees >= -67.5 && degrees < -22.5) return DIRECTION_DOWN_LEFT;
+        else return DIRECTION_CENTER;
     }
 
     public void setListener(JoyStickListener listener) {
@@ -227,6 +236,10 @@ public class JoyStick extends View {
 
     public int getDirection() {
         return direction;
+    }
+
+    public int getType() {
+        return type;
     }
 
     //Customization ----------------------------------------------------------------
@@ -265,5 +278,9 @@ public class JoyStick extends View {
 
     public void setButtonDrawable(Bitmap bitmap) {
         this.buttonBitmap = bitmap;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }
