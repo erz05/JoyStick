@@ -33,16 +33,27 @@ import android.view.View;
  */
 public class JoyStick extends View {
 
+    public static final int CENTER = -1;
+    public static final int LEFT = 0;
+    public static final int LEFT_UP = 1;
+    public static final int UP = 2;
+    public static final int UP_RIGHT = 3;
+    public static final int RIGHT = 4;
+    public static final int RIGHT_DOWN = 5;
+    public static final int DOWN = 6;
+    public static final int DOWN_LEFT = 7;
+
     private JoyStickListener listener;
     private Paint paint;
+    private int direction = CENTER;
     private float centerX;
     private float centerY;
     private float posX;
     private float posY;
     private float radius;
     private float buttonRadius;
-    private double power = -1;
-    private double angle = -1;
+    private double power = 0;
+    private double angle = 0;
     private RectF temp;
 
     //Background Color
@@ -64,7 +75,7 @@ public class JoyStick extends View {
     private Bitmap buttonBitmap = null;
 
     public interface JoyStickListener {
-        void onMove(JoyStick joyStick, double angle, double power);
+        void onMove(JoyStick joyStick, double angle, double power, int direction);
     }
 
     public JoyStick(Context context) {
@@ -81,6 +92,7 @@ public class JoyStick extends View {
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
         paint.setAntiAlias(true);
+        paint.setFilterBitmap(true);
 
         temp = new RectF();
 
@@ -127,8 +139,7 @@ public class JoyStick extends View {
     }
 
     @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
+    public void onDraw(Canvas canvas) {
         if (canvas == null) return;
         if (padBGBitmap == null) {
             paint.setColor(padColor);
@@ -166,6 +177,17 @@ public class JoyStick extends View {
                         * (posX - centerX) + (posY - centerY)
                         * (posY - centerY)) / radius);
 
+                double degrees = Math.toDegrees(angle);
+                if ((degrees >= 0 && degrees < 22.5) || (degrees < 0 && degrees > -22.5)) direction = LEFT;
+                else if (degrees >= 22.5 && degrees < 67.5) direction = LEFT_UP;
+                else if (degrees >= 67.5 && degrees < 112.5) direction = UP;
+                else if (degrees >= 112.5 && degrees < 157.5) direction = UP_RIGHT;
+                else if ((degrees >= 157.5 && degrees <= 180) || (degrees >= -180 && degrees < -157.5)) direction = RIGHT;
+                else if (degrees >= -157.5 && degrees < -112.5) direction = RIGHT_DOWN;
+                else if (degrees >= -112.5 && degrees < -67.5) direction = DOWN;
+                else if (degrees >= -67.5 && degrees < -22.5) direction = DOWN_LEFT;
+                else direction = CENTER;
+
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
@@ -173,6 +195,7 @@ public class JoyStick extends View {
                 if (!stayPut) {
                     posX = centerX;
                     posY = centerY;
+                    direction = CENTER;
                     angle = 0;
                     power = 0;
                     invalidate();
@@ -181,17 +204,9 @@ public class JoyStick extends View {
         }
 
         if (listener != null) {
-            listener.onMove(this, angle, power);
+            listener.onMove(this, angle, power, direction);
         }
         return true;
-    }
-
-    public void setPadColor(int padColor) {
-        this.padColor = padColor;
-    }
-
-    public void setButtonColor(int buttonColor) {
-        this.buttonColor = buttonColor;
     }
 
     public void setListener(JoyStickListener listener) {
@@ -210,8 +225,18 @@ public class JoyStick extends View {
         return Math.toDegrees(angle);
     }
 
-    public void enableStayPut(boolean enable) {
-        this.stayPut = enable;
+    public int getDirection() {
+        return direction;
+    }
+
+    //Customization ----------------------------------------------------------------
+
+    public void setPadColor(int padColor) {
+        this.padColor = padColor;
+    }
+
+    public void setButtonColor(int buttonColor) {
+        this.buttonColor = buttonColor;
     }
 
     //size of button is a percentage of the minimum(width, height)
@@ -222,11 +247,23 @@ public class JoyStick extends View {
         if (percentage < 25) percentage = 25;
     }
 
+    public void enableStayPut(boolean enable) {
+        this.stayPut = enable;
+    }
+
     public void setPadBackground(int resId) {
         this.padBGBitmap = BitmapFactory.decodeResource(getResources(), resId);
     }
 
+    public void setPadBackground(Bitmap bitmap) {
+        this.padBGBitmap = bitmap;
+    }
+
     public void setButtonDrawable(int resId) {
         this.buttonBitmap = BitmapFactory.decodeResource(getResources(), resId);
+    }
+
+    public void setButtonDrawable(Bitmap bitmap) {
+        this.buttonBitmap = bitmap;
     }
 }
