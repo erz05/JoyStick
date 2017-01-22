@@ -38,4 +38,10 @@ public class MainActivity extends AppCompatActivity implements JoyStick.JoyStick
                 break;
         }
     }
+
+    @Override
+    public void onTap() {}
+
+    @Override
+    public void onDoubleTap() {}
 }

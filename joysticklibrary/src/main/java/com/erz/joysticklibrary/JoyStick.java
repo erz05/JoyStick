@@ -25,13 +25,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
 /**
  * Created by edgarramirez on 10/30/15.
  */
-public class JoyStick extends View {
+public class JoyStick extends View implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
 
     public static final int DIRECTION_CENTER = -1;
     public static final int DIRECTION_LEFT = 0;
@@ -50,6 +51,8 @@ public class JoyStick extends View {
 
     private JoyStickListener listener;
     private Paint paint;
+    private RectF temp;
+    private GestureDetector gestureDetector;
     private int direction = DIRECTION_CENTER;
     private int type = TYPE_8_AXIS;
     private float centerX;
@@ -60,7 +63,6 @@ public class JoyStick extends View {
     private float buttonRadius;
     private double power = 0;
     private double angle = 0;
-    private RectF temp;
 
     //Background Color
     private int padColor;
@@ -82,25 +84,26 @@ public class JoyStick extends View {
 
     public interface JoyStickListener {
         void onMove(JoyStick joyStick, double angle, double power, int direction);
+        void onTap();
+        void onDoubleTap();
     }
 
     public JoyStick(Context context) {
-        super(context);
-        init(context, null);
+        this(context, null);
     }
 
     public JoyStick(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs);
-    }
-
-    private void init(Context context, AttributeSet attrs) {
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
         paint.setAntiAlias(true);
         paint.setFilterBitmap(true);
 
         temp = new RectF();
+
+        gestureDetector = new GestureDetector(context, this);
+        gestureDetector.setIsLongpressEnabled(false);
+        gestureDetector.setOnDoubleTapListener(this);
 
         padColor = Color.WHITE;
         buttonColor = Color.RED;
@@ -165,6 +168,8 @@ public class JoyStick extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        gestureDetector.onTouchEvent(event);
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
@@ -204,6 +209,49 @@ public class JoyStick extends View {
             listener.onMove(this, angle, power, direction);
         }
         return true;
+    }
+
+    @Override
+    public boolean onDown(MotionEvent motionEvent) {
+        return true;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent motionEvent) {}
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent motionEvent) {}
+
+    @Override
+    public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+        return false;
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
+        if (listener != null) listener.onTap();
+        return false;
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent motionEvent) {
+        if (listener != null) listener.onDoubleTap();
+        return false;
+    }
+
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent motionEvent) {
+        return false;
     }
 
     private static int calculateDirection(double degrees) {
