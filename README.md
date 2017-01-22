@@ -23,11 +23,13 @@ Gradle Import: jcenter <br>
 ```groovy
 
 repositories {
-    jcenter()
+    maven {
+        url  "http://dl.bintray.com/erz05/maven" 
+    }
 }
 
 dependencies {
-    compile 'com.github.erz05:JoyStick:1.0.3@aar'
+    compile 'com.github.erz05:JoyStick:1.0.3'
 }
 ```
 
