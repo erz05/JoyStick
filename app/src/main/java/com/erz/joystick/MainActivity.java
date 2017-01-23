@@ -8,7 +8,7 @@ import com.erz.joysticklibrary.JoyStick;
 
 public class MainActivity extends AppCompatActivity implements JoyStick.JoyStickListener {
 
-    GameView gameView;
+    private GameView gameView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

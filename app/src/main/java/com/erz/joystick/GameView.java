@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -20,61 +19,55 @@ import java.util.Vector;
  */
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
+    private int i;
+    private int size = 20;
+    private int minSpeed;
+    private int maxSpeed;
+    private int minRadius;
+    private int maxRadius;
     private float width;
     private float height;
     private float posX;
     private float posY;
     private float radius;
-    private GameLoop gameLoop;
-    private Paint paint;
-    private Random random = new Random();
-    private int i;
-    private int size = 20;
-    private int maxRadius;
-    private Bitmap droid;
-    private RectF rectF;
-
     private double angle;
     private double power;
-
     private double angle2;
+    private Bitmap droid;
+    private GameLoop gameLoop;
+    private Paint paint;
+    private Vector<Star> stars = new Vector<>();
+    private RectF rectF = new RectF();
+    private Random random = new Random();
 
-    private Vector<Star> stars;
+    public GameView(Context context) {
+        this(context, null);
+    }
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
-    }
-
-    public GameView(Context context) {
-        super(context);
-        init();
-    }
-
-    private void init() {
         getHolder().addCallback(this);
         paint = new Paint();
         paint.setAntiAlias(true);
+        paint.setFilterBitmap(true);
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
         droid = BitmapFactory.decodeResource(getResources(), R.drawable.droid);
-        rectF = new RectF();
     }
 
     @Override
-    public void draw(@NonNull Canvas canvas) {
+    public void draw(Canvas canvas) {
         if (canvas == null) return;
-        super.draw(canvas);
         canvas.drawColor(Color.BLACK);
 
         if (stars != null && stars.size() > 0) {
             for (i = 0; i < size; i++) {
-                stars.get(i).draw(canvas, paint, height, maxRadius);
+                stars.get(i).draw(canvas, paint, rectF, random, minSpeed, maxSpeed, minRadius, maxRadius, width, height, maxRadius);
             }
         }
 
-        posX -= Math.cos(angle) * (power / 2);
-        posY += Math.sin(-angle) * (power / 2);
+        posX -= Math.cos(angle) * power;
+        posY += Math.sin(-angle) * power;
         if (posX > width - radius) posX = width - radius;
         if (posX < radius) posX = radius;
         if (posY > height - radius) posY = height - radius;
@@ -108,23 +101,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         radius = min / 12;
         rectF = new RectF(posX - radius, posY - radius, posX + radius, posY + radius);
 
-        int minSpeed = (int) (min / 75);
-        int maxSpeed = (int) (min / 25);
-
-        int minRadius = (int) (min / 250);
+        minSpeed = (int) (min / 37);
+        maxSpeed = (int) (min / 12);
+        minRadius = (int) (min / 250);
         maxRadius = (int) (min / 220);
 
         if (maxRadius == minRadius) maxRadius += minRadius;
 
-        stars = new Vector<>();
+        stars.clear();
         for (i = 0; i < size; i++) {
-            int tmpRadius = random.nextInt(maxRadius - minRadius) + minRadius;
-            int maxX = width - tmpRadius;
-            int maxY = height - tmpRadius;
-            stars.add(new Star(random.nextInt(maxX - tmpRadius + (maxRadius * 4)) + (tmpRadius - (maxRadius * 4)),
-                    random.nextInt(maxY - tmpRadius + (maxRadius * 4)) + (tmpRadius - (maxRadius * 4)),
-                    random.nextInt(maxSpeed - minSpeed) + minSpeed,
-                    tmpRadius));
+            stars.add(new Star(random, minSpeed, maxSpeed, minRadius, maxRadius, width, height));
         }
     }
 
