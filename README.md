@@ -36,7 +36,7 @@ dependencies {
     compile 'com.github.erz05:JoyStick:1.1.0'
 }
 ```
-<H2>v1.10 BREAKING CHANGE!</H2>
+<H2>v1.1.0 BREAKING CHANGE!</H2>
 1. Made changes to JoyStickListener<br>
 a. Added Direction to onMove<br>
 b. Added Event calls for onTap and onDoubleTap<br>
