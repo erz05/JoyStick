@@ -1,15 +1,13 @@
 # JoyStick
 Android Library for JoyStick View.<br>
-Its customizable, small and lightweight.<br>
-Change Background/Button Color, use image for Background/Button.
+Customizable, small and lightweight.
 
-[ ![Download](https://api.bintray.com/packages/erz05/maven/JoyStick/images/download.svg) ](https://bintray.com/erz05/maven/JoyStick/_latestVersion)
+[![Download](https://api.bintray.com/packages/erz05/maven/JoyStick/images/download.svg)](https://bintray.com/erz05/maven/JoyStick/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-JoyStick-blue.svg?style=flat)](http://android-arsenal.com/details/1/2712)
 
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-JoyStick-blue.svg?style=flat)](http://android-arsenal.com/details/1/2712)
+<H2>Sample App</H2>
+<img height="70px" src="https://github.com/erz05/JoyStick/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" />
+<a href="https://play.google.com/store/apps/details?id=com.erz.joystick&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-AC-global-none-all-co-pr-py-PartBadges-Oct1515-1"><img height="70px" alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/apps/en-play-badge.png" /></a>
 
-<a href="https://play.google.com/store/apps/details?id=com.erz.joystick&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-AC-global-none-all-co-pr-py-PartBadges-Oct1515-1"><img height="75px" alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/apps/en-play-badge.png" /></a>
-
-<H2>Images: Sample App</H2>
 <img width="300px" src="https://github.com/erz05/JoyStick/blob/master/images/Screenshot_2015-10-30-21-38-13.png" />
 <br><br>
 <img width="300px" src="https://github.com/erz05/JoyStick/blob/master/images/Screenshot_2015-10-30-21-43-47.png" />
