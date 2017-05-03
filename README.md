@@ -18,6 +18,7 @@ JoyStick with Image for button<br>
 
 <H2>Usage</H2>
 Gradle Import: jcenter <br>
+
 ```groovy
 
 repositories {
@@ -34,12 +35,15 @@ dependencies {
     compile 'com.github.erz05:JoyStick:1.1.0'
 }
 ```
+
 <H2>v1.1.0 BREAKING CHANGE!</H2>
+
 1. Made changes to JoyStickListener<br>
 a. Added Direction to onMove<br>
 b. Added Event calls for onTap and onDoubleTap<br>
 
 <H2>Defaults:</H2>
+
 1. Background = White
 2. Button = Red
 3. Button Radius = 25%
@@ -77,6 +81,7 @@ JoyStick joyStick = new JoyStick(context);
 ```
 
 <H2>JoyStickListener:</H2>
+
 ```java
 //JoyStickListener Interface
 public interface JoyStickListener {
@@ -104,6 +109,7 @@ joyStick.setListener(this);
 9. DIRECTION_DOWN_LEFT = 7
 
 To get JoyStick direction you can use
+
 ```java
 joyStick.getDirection();
 ```
@@ -116,11 +122,13 @@ or get it from the JoyStickListener
 4. TYPE_2_AXIS_UP_DOWN
 
 To set Axis Type:
+
 ```java
 joyStick.setType(JoyStick.TYPE_4_AXIS);
 ```
 
 <H2>Getters/Setters</H2>
+
 ```java
 //Set GamePad Color
 joyStick.setPadColor(Color.BLACK);
@@ -164,4 +172,3 @@ joyStick.getAngleDegrees();
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
