@@ -31,6 +31,7 @@ import android.view.View;
 
 /**
  * Created by edgarramirez on 10/30/15.
+ * JoyStick view with lots of customizable options
  */
 public class JoyStick extends View implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
 
