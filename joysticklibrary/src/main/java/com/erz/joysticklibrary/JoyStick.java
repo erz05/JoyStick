@@ -155,7 +155,29 @@ public class JoyStick extends View implements GestureDetector.OnGestureListener,
         if (canvas == null) return;
         if (padBGBitmap == null) {
             paint.setColor(padColor);
-            canvas.drawCircle(centerX, centerY, radius, paint);
+            if (type == TYPE_2_AXIS_UP_DOWN) {
+                canvas.drawCircle(getHeight() / 2f, getWidth() - buttonRadius * 1.25f, buttonRadius * 1.25f, paint);
+                canvas.drawCircle(getHeight() / 2f, buttonRadius * 1.25f, buttonRadius * 1.25f, paint);
+                canvas.drawRect(
+                        (getHeight() / 2f) - (buttonRadius * 1.25f),
+                        buttonRadius*1.25f,
+                        (getHeight() / 2f) + (buttonRadius * 1.25f),
+                        getWidth() - buttonRadius * 1.25f,
+                        paint
+                );
+            } else if (type == TYPE_2_AXIS_LEFT_RIGHT) {
+                canvas.drawCircle(getWidth() - buttonRadius * 1.25f, getHeight() / 2f, buttonRadius * 1.25f, paint);
+                canvas.drawCircle(buttonRadius * 1.25f, getHeight() / 2f, buttonRadius * 1.25f, paint);
+                canvas.drawRect(
+                        buttonRadius*1.25f,
+                        (getHeight() / 2f) - (buttonRadius * 1.25f),
+                        getWidth() - buttonRadius * 1.25f,
+                        (getHeight() / 2f) + (buttonRadius * 1.25f),
+                        paint
+                );
+            } else {
+                canvas.drawCircle(centerX, centerY, radius, paint);
+            }
         } else {
             temp.set(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
             canvas.drawBitmap(padBGBitmap, null, temp, paint);
