@@ -17,7 +17,8 @@ public class MainActivity extends AppCompatActivity implements JoyStick.JoyStick
         gameView = (GameView) findViewById(R.id.game);
         JoyStick joy1 = (JoyStick) findViewById(R.id.joy1);
         joy1.setListener(this);
-        joy1.setPadColor(Color.parseColor("#55ffffff"));
+        joy1.setType(JoyStick.TYPE_2_AXIS_LEFT_RIGHT);
+        joy1.setPadColor(Color.parseColor("#ffffff"));
         joy1.setButtonColor(Color.parseColor("#55ff0000"));
 
         JoyStick joy2 = (JoyStick) findViewById(R.id.joy2);
