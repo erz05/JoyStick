@@ -22,6 +22,8 @@ import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.min
 import kotlin.math.sqrt
+import androidx.compose.ui.util.fastAll
+import androidx.compose.ui.util.fastFirstOrNull
 
 enum class JoystickDirection(val value: Int) {
     CENTER(-1),
@@ -138,7 +140,7 @@ fun Joystick(
                     while (true) {
                         val event = awaitPointerEvent()
 
-                        val change = event.changes.firstOrNull { it.id == pointerId }
+                        val change = event.changes.fastFirstOrNull { it.id == pointerId }
 
                         if (change != null && change.positionChanged()) {
                             // Only count as drag if movement exceeds touch slop
@@ -154,7 +156,7 @@ fun Joystick(
                             change.consume()
                         }
 
-                        if (event.changes.all { !it.pressed }) {
+                        if (event.changes.fastAll { !it.pressed }) {
                             if (!dragTriggered) {
                                 if (isDoubleTap) {
                                     currentOnDoubleTap?.invoke()
