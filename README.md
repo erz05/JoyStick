@@ -1,171 +1,164 @@
 # JoyStick
-Android Library for JoyStick View.<br>
-Customizable, small and lightweight.
+
+An Android Library for JoyStick View & Composable.
+Customizable, small, lightweight, and modern.
 
 [![Download](https://api.bintray.com/packages/erz05/maven/JoyStick/images/download.svg)](https://bintray.com/erz05/maven/JoyStick/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-JoyStick-blue.svg?style=flat)](http://android-arsenal.com/details/1/2712)
 
-<H2>Sample App</H2>
-<img height="70px" src="https://github.com/erz05/JoyStick/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" />
-<a href="https://play.google.com/store/apps/details?id=com.erz.joystick&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-AC-global-none-all-co-pr-py-PartBadges-Oct1515-1"><img height="70px" alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/apps/en-play-badge.png" /></a>
+---
 
-<img width="300px" src="https://github.com/erz05/JoyStick/blob/master/images/Screenshot_2015-10-30-21-38-13.png" />
-<br><br>
-<img width="300px" src="https://github.com/erz05/JoyStick/blob/master/images/Screenshot_2015-10-30-21-43-47.png" />
-<br><br>
-JoyStick with Image for button<br>
-<img width="300px" src="https://github.com/erz05/JoyStick/blob/master/images/Screenshot_2015-11-02-18-05-49.png" />
-<br>
+## 🚀 Modernization & v2.0.0 (BREAKING CHANGE)
 
-<H2>Usage</H2>
-Gradle Import: jcenter <br>
+This library has been completely modernized to Kotlin and Jetpack Compose:
+1. **Written in Kotlin**: All source code is converted to Kotlin.
+2. **Jetpack Compose Support**: Introduced the new `Joystick` Composable function.
+3. **Legacy View Deprecation**: The legacy View-based `JoyStick` class is deprecated, but remains available in Kotlin for backward compatibility.
+4. **Modern Build System**: Upgraded to Gradle 9.1.0, AGP 9.0.1, Kotlin 2.3.20, and uses Version Catalogs (`libs.versions.toml`).
+5. **Increased Min SDK**: The minimum SDK has been bumped to **21** to support Jetpack Compose.
 
-```groovy
+---
 
-repositories {
-    maven {
-        url  "http://dl.bintray.com/erz05/maven" 
+## 🎨 Jetpack Compose Usage
+
+The new `Joystick` composable is highly customizable, supports custom sizing, custom color styling, and custom images via Compose Painters.
+
+### Basic Setup
+```kotlin
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.erz.joysticklibrary.Joystick
+import com.erz.joysticklibrary.JoystickDirection
+
+var angle by remember { mutableStateOf(0.0) }
+var power by remember { mutableStateOf(0.0) }
+var direction by remember { mutableStateOf(JoystickDirection.CENTER) }
+
+Joystick(
+    modifier = Modifier.size(150.dp),
+    onMove = { newAngle, newPower, newDirection ->
+        angle = newAngle
+        power = newPower
+        direction = newDirection
     }
-    
-    //Or
-    
-    jcenter()
-}
-
-dependencies {
-    compile 'com.github.erz05:JoyStick:1.1.0'
-}
+)
 ```
 
-<H2>v1.1.0 BREAKING CHANGE!</H2>
+### Advanced Customs & Painters
+```kotlin
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 
-1. Made changes to JoyStickListener<br>
-a. Added Direction to onMove<br>
-b. Added Event calls for onTap and onDoubleTap<br>
+Joystick(
+    modifier = Modifier.size(200.dp),
+    type = JoystickType.FOUR_AXIS,          // Snap to 4 directions
+    stayPut = true,                         // Button stays where dragged
+    radiusScale = 0.30f,                    // Scale button size (0.25f - 0.50f)
+    
+    // Sized by Colors
+    padColor = Color(0x33FFFFFF),
+    buttonColor = Color.Red,
+    
+    // OR Customize with Painters (Bitmaps or Vector drawables)
+    padPainter = painterResource(id = R.drawable.custom_pad),
+    buttonPainter = painterResource(id = R.drawable.custom_button),
+    
+    onMove = { angle, power, direction -> 
+        /* Handle movement */ 
+    },
+    onTap = { 
+        /* Handle tap event */ 
+    },
+    onDoubleTap = { 
+        /* Handle double tap event */ 
+    }
+)
+```
 
-<H2>Defaults:</H2>
+### Axis Types (`JoystickType`)
+- `JoystickType.EIGHT_AXIS` (Default, 8 directions)
+- `JoystickType.FOUR_AXIS` (4 directions: Left, Up, Right, Down)
+- `JoystickType.TWO_AXIS_LEFT_RIGHT` (Restricted to Left/Right)
+- `JoystickType.TWO_AXIS_UP_DOWN` (Restricted to Up/Down)
 
-1. Background = White
-2. Button = Red
-3. Button Radius = 25%
-4. StayPut = false
-5. Directional-Axis = 8
+### Directions (`JoystickDirection`)
+- `JoystickDirection.CENTER` (-1)
+- `JoystickDirection.LEFT` (0)
+- `JoystickDirection.LEFT_UP` (1)
+- `JoystickDirection.UP` (2)
+- `JoystickDirection.UP_RIGHT` (3)
+- `JoystickDirection.RIGHT` (4)
+- `JoystickDirection.RIGHT_DOWN` (5)
+- `JoystickDirection.DOWN` (6)
+- `JoystickDirection.DOWN_LEFT` (7)
 
-<H2>Setup:</H2>
+---
+
+## ⚠️ Legacy View Usage (DEPRECATED)
+
+The old XML/View-based custom view `JoyStick` is deprecated. If you are migrating a legacy project, you can continue to use it. It has been converted to Kotlin:
 
 ```xml
 <com.erz.joysticklibrary.JoyStick
-  android:id="@+id/joy1"
-  android:layout_width="200dp"
-  android:layout_height="200dp"
-  android:layout_gravity="bottom"/>
-
-<com.erz.joysticklibrary.JoyStick
-    android:id="@+id/joy2"
+    android:id="@+id/joyStick"
     android:layout_width="200dp"
     android:layout_height="200dp"
-    android:layout_gravity="bottom|right"
     app:padColor="#55ffffff"
     app:buttonColor="#55ff0000"
     app:stayPut="true"
-    app:percentage="25" //default 25: radius percentage of full size of the view between 25% and 50%
-    app:backgroundDrawable="R.drawable.background"
-    app:buttonDrawable="R.drawable.button"/>
+    app:percentage="25"
+    app:backgroundDrawable="@drawable/pad"
+    app:buttonDrawable="@drawable/button"/>
 ```
 
-```java
-JoyStick joyStick = (JoyStick) findViewById(R.id.joyStick);
-
-//or 
-
-JoyStick joyStick = new JoyStick(context);
+In your Activity/Fragment:
+```kotlin
+val joyStick = findViewById<JoyStick>(R.id.joyStick)
+joyStick.setListener(object : JoyStick.JoyStickListener {
+    override fun onMove(joyStick: JoyStick?, angle: Double, power: Double, direction: Int) {
+        // Handle move
+    }
+    override fun onTap() {}
+    override fun onDoubleTap() {}
+})
 ```
 
-<H2>JoyStickListener:</H2>
+---
 
-```java
-//JoyStickListener Interface
-public interface JoyStickListener {
-        void onMove(JoyStick joyStick, double angle, double power, int direction);
-        void onTap();
-        void onDoubleTap();
+## 📦 Installation
+
+To include the library in your Gradle project:
+
+### Version Catalog (`libs.versions.toml`)
+```toml
+[libraries]
+joystick = { module = "com.github.erz05:JoyStick", version = "2.0.0" }
+```
+
+### Module Build Script (`build.gradle.kts`)
+```kotlin
+dependencies {
+    implementation(libs.joystick)
+    // Or if importing as a local project module:
+    // implementation(project(":joysticklibrary"))
 }
-
-//Set JoyStickListener
-joyStick.setListener(this);
-```
-1. onMove: gets called everytime theres a touch interaction
-2. onTap: gets called onSingleTapConfirmed
-3. onDoubleTap: gets called onDoubleTap
-
-<H2>Directions:</H2>
-1. DIRECTION_CENTER = -1
-2. DIRECTION_LEFT = 0
-3. DIRECTION_LEFT_UP = 1
-4. DIRECTION_UP = 2
-5. DIRECTION_UP_RIGHT = 3 
-6. DIRECTION_RIGHT = 4
-7. DIRECTION_RIGHT_DOWN = 5 
-8. DIRECTION_DOWN = 6
-9. DIRECTION_DOWN_LEFT = 7
-
-To get JoyStick direction you can use
-
-```java
-joyStick.getDirection();
-```
-or get it from the JoyStickListener
-
-<H2>Axis Types:</H2>
-1. TYPE_8_AXIS 
-2. TYPE_4_AXIS 
-3. TYPE_2_AXIS_LEFT_RIGHT 
-4. TYPE_2_AXIS_UP_DOWN
-
-To set Axis Type:
-
-```java
-joyStick.setType(JoyStick.TYPE_4_AXIS);
 ```
 
-<H2>Getters/Setters</H2>
+---
 
-```java
-//Set GamePad Color
-joyStick.setPadColor(Color.BLACK);
+## 📄 License
 
-//Set Button Color
-joyStick.setButtonColor(Color.RED);
-
-//Set Background Image
-joyStick.setPadBackground(resId);
-
-//Set Button Image
-joyStick.setButtonDrawable(resId);
-
-//Set Button Scale
-joyStick.setButtonRadiusScale(scale);
-
-//Enable Button to Stay Put
-joyStick.enableStayPut(enable);
-
-//Get Power
-joyStick.getPower();
-
-//Get Angle
-joyStick.getAngle();
-
-//Get Angle in Degrees
-joyStick.getAngleDegrees();
-```
-
-<H2>License</H2>
     Copyright 2015 erz05
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+       http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
