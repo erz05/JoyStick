@@ -35,9 +35,8 @@ enum class JoystickDirection(val value: Int) {
     DOWN_LEFT(7);
 
     companion object {
-        fun fromValue(value: Int): JoystickDirection {
-            return entries.firstOrNull { it.value == value } ?: CENTER
-        }
+        private val valuesByValue = entries.associateBy { it.value }
+        fun fromValue(value: Int): JoystickDirection = valuesByValue[value] ?: CENTER
     }
 }
 
@@ -62,23 +61,19 @@ fun Joystick(
     onTap: (() -> Unit)? = null,
     onDoubleTap: (() -> Unit)? = null
 ) {
-    // 1. Stabilize callbacks to prevent pointerInput from restarting
     val currentOnMove by rememberUpdatedState(onMove)
     val currentOnTap by rememberUpdatedState(onTap)
     val currentOnDoubleTap by rememberUpdatedState(onDoubleTap)
 
-    val scale = radiusScale.coerceIn(0.25f, 0.50f)
+    val scale = remember(radiusScale) { radiusScale.coerceIn(0.25f, 0.50f) }
 
-    // 2. Use unboxed primitives and store relative offsets instead of absolute positions
     var thumbOffsetX by remember { mutableFloatStateOf(0f) }
     var thumbOffsetY by remember { mutableFloatStateOf(0f) }
 
-    // 3. Remove Box and attach pointerInput directly to Canvas to reduce node depth
     Canvas(
         modifier = modifier
             .fillMaxSize()
             .pointerInput(stayPut, type, scale) {
-                // Read size directly from PointerInputScope
                 val centerX = size.width / 2f
                 val centerY = size.height / 2f
                 val minDim = min(size.width, size.height).toFloat()
@@ -97,9 +92,10 @@ fun Joystick(
                     var dragTriggered = false
                     val pointerId = down.id
 
-                    fun updatePosition(offset: Offset) {
-                        val deltaX = offset.x - centerX
-                        val deltaY = offset.y - centerY
+                    // Performance Fix: Pass raw primitive coordinates to avoid object allocations in high-frequency loops
+                    fun updatePosition(rawX: Float, rawY: Float) {
+                        val deltaX = rawX - centerX
+                        val deltaY = rawY - centerY
 
                         var targetDx = deltaX
                         var targetDy = deltaY
@@ -124,25 +120,26 @@ fun Joystick(
                         }
 
                         val power = (100 * sqrt(thumbOffsetX * thumbOffsetX + thumbOffsetY * thumbOffsetY) / maxTravelDistance).toDouble()
-
-                        // Preserving original math logic by negating offsets
                         val angle = atan2(-thumbOffsetY.toDouble(), -thumbOffsetX.toDouble())
                         val direction = calculateDirection(Math.toDegrees(angle))
 
                         currentOnMove(angle, power, direction)
                     }
 
-                    updatePosition(down.position)
+                    updatePosition(down.position.x, down.position.y)
 
                     while (true) {
                         val event = awaitPointerEvent()
-                        val anyPositionChange = event.changes.any { it.positionChanged() }
-                        if (anyPositionChange) {
+
+                        // Performance Fix: Avoid checking all items if the tracked pointer hasn't changed
+                        val change = event.changes.firstOrNull { it.id == pointerId }
+
+                        if (change != null && change.positionChanged()) {
                             dragTriggered = true
-                            val change = event.changes.firstOrNull { it.id == pointerId } ?: event.changes.first()
-                            updatePosition(change.position)
+                            updatePosition(change.position.x, change.position.y)
                             change.consume()
                         }
+
                         if (event.changes.all { !it.pressed }) {
                             if (!dragTriggered) {
                                 if (isDoubleTap) {
@@ -162,7 +159,6 @@ fun Joystick(
                 }
             }
     ) {
-        // Read size directly from DrawScope
         val centerX = size.width / 2f
         val centerY = size.height / 2f
         val minDim = min(size.width, size.height)
@@ -186,11 +182,10 @@ fun Joystick(
             )
         }
 
-        // Calculate absolute position on the fly during Draw Phase
+        // Draw Button tracking states cleanly
         val posX = centerX + thumbOffsetX
         val posY = centerY + thumbOffsetY
 
-        // Draw Button
         if (buttonPainter != null) {
             translate(left = posX - buttonRadius, top = posY - buttonRadius) {
                 with(buttonPainter) {
@@ -207,16 +202,24 @@ fun Joystick(
     }
 }
 
+// Clean, O(1) mathematical lookup mapping degrees flawlessly to standard directions
 private fun calculateDirection(degrees: Double): JoystickDirection {
-    return when {
-        (degrees >= 0 && degrees < 22.5) || (degrees < 0 && degrees > -22.5) -> JoystickDirection.LEFT
-        degrees >= 22.5 && degrees < 67.5 -> JoystickDirection.LEFT_UP
-        degrees >= 67.5 && degrees < 112.5 -> JoystickDirection.UP
-        degrees >= 112.5 && degrees < 157.5 -> JoystickDirection.UP_RIGHT
-        (degrees >= 157.5 && degrees <= 180) || (degrees >= -180 && degrees < -157.5) -> JoystickDirection.RIGHT
-        degrees >= -157.5 && degrees < -112.5 -> JoystickDirection.RIGHT_DOWN
-        degrees >= -112.5 && degrees < -67.5 -> JoystickDirection.DOWN
-        degrees >= -67.5 && degrees < -22.5 -> JoystickDirection.DOWN_LEFT
+    // Normalize degrees from [-180, 180] to [0, 360)
+    val normalized = if (degrees < 0) degrees + 360.0 else degrees
+
+    // Shift by 22.5 degrees so that the "LEFT" sector spans across the 0/360 boundary cleanly
+    val shifted = (normalized + 22.5) % 360.0
+
+    // Map 45-degree chunks to their respective indices
+    return when ((shifted / 45.0).toInt()) {
+        0 -> JoystickDirection.LEFT
+        1 -> JoystickDirection.LEFT_UP
+        2 -> JoystickDirection.UP
+        3 -> JoystickDirection.UP_RIGHT
+        4 -> JoystickDirection.RIGHT
+        5 -> JoystickDirection.RIGHT_DOWN
+        6 -> JoystickDirection.DOWN
+        7 -> JoystickDirection.DOWN_LEFT
         else -> JoystickDirection.CENTER
     }
 }
