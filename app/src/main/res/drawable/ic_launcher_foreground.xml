@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Group all paths and translate down by 28px to perfectly center the logo vertically -->
+    <group android:translateY="28">
+        <!-- Controller Body Silhouette (Solid White Casing) -->
+        <path
+            android:fillColor="#F4F4F5"
+            android:pathData="M 176 140 H 336 A 48 48 0 0 1 384 188 V 324 A 48 48 0 0 1 336 372 H 176 A 48 48 0 0 1 128 324 V 188 A 48 48 0 0 1 176 140 Z" />
+
+        <!-- SELECT / START BUTTON CUTOUTS (Bottom Center) -->
+        <!-- Select Button -->
+        <path
+            android:fillColor="#18181B"
+            android:pathData="M 237 324 H 247 A 3 3 0 0 1 250 327 V 327 A 3 3 0 0 1 247 330 H 237 A 3 3 0 0 1 234 327 V 327 A 3 3 0 0 1 237 324 Z" />
+        <!-- Start Button -->
+        <path
+            android:fillColor="#18181B"
+            android:pathData="M 265 324 H 275 A 3 3 0 0 1 278 327 V 327 A 3 3 0 0 1 275 330 H 265 A 3 3 0 0 1 262 327 V 327 A 3 3 0 0 1 265 324 Z" />
+
+        <!-- DECORATIVE RETRO STRIPE CUTOUTS (Top-Right) -->
+        <path
+            android:fillColor="#18181B"
+            android:pathData="M 338 164 H 338 A 2 2 0 0 1 340 166 V 202 A 2 2 0 0 1 338 204 H 338 A 2 2 0 0 1 336 202 V 166 A 2 2 0 0 1 338 164 Z" />
+        <path
+            android:fillColor="#18181B"
+            android:pathData="M 346 164 H 346 A 2 2 0 0 1 348 166 V 202 A 2 2 0 0 1 346 204 H 346 A 2 2 0 0 1 344 202 V 166 A 2 2 0 0 1 346 164 Z" />
+        <path
+            android:fillColor="#18181B"
+            android:pathData="M 354 164 H 354 A 2 2 0 0 1 356 166 V 202 A 2 2 0 0 1 354 204 H 354 A 2 2 0 0 1 352 202 V 166 A 2 2 0 0 1 354 164 Z" />
+
+        <!-- RIGHT SIDE: ACTION BUTTON CUTOUT (Horizontally Aligned at cy=256) -->
+        <!-- Outer Dark Ring Cutout -->
+        <path
+            android:fillColor="#18181B"
+            android:pathData="M 292 256 A 24 24 0 1 0 340 256 A 24 24 0 1 0 292 256 Z" />
+        <!-- Inner White Button Cap -->
+        <path
+            android:fillColor="#F4F4F5"
+            android:pathData="M 302 256 A 14 14 0 1 0 330 256 A 14 14 0 1 0 302 256 Z" />
+
+        <!-- LEFT SIDE: JOYSTICK SILHOUETTE -->
+        <!-- Joystick Base / Slot (Enlarged) -->
+        <path
+            android:fillColor="#18181B"
+            android:pathData="M 152 256 A 44 44 0 1 0 240 256 A 44 44 0 1 0 152 256 Z" />
+
+        <!-- Joystick Stick & Knob Background (Enlarged, cuts gap into white body) -->
+        <path
+            android:strokeColor="#18181B"
+            android:strokeWidth="24"
+            android:strokeLineCap="round"
+            android:pathData="M 196 256 L 216 140" />
+        <path
+            android:fillColor="#18181B"
+            android:pathData="M 160 140 A 56 56 0 1 0 272 140 A 56 56 0 1 0 160 140 Z" />
+
+        <!-- Joystick Stick & Knob Foreground (White Silhouette) -->
+        <path
+            android:strokeColor="#F4F4F5"
+            android:strokeWidth="12"
+            android:strokeLineCap="round"
+            android:pathData="M 196 256 L 216 140" />
+        <path
+            android:fillColor="#F4F4F5"
+            android:pathData="M 174 140 A 42 42 0 1 0 258 140 A 42 42 0 1 0 174 140 Z" />
+    </group>
+</vector>
