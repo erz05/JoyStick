@@ -3,7 +3,6 @@ package com.erz.joysticklibrary
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -14,8 +13,6 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChanged
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.IntSize
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.min
@@ -34,7 +31,7 @@ enum class JoystickDirection(val value: Int) {
 
     companion object {
         fun fromValue(value: Int): JoystickDirection {
-            return values().firstOrNull { it.value == value } ?: CENTER
+            return entries.firstOrNull { it.value == value } ?: CENTER
         }
     }
 }
@@ -60,30 +57,29 @@ fun Joystick(
     onTap: (() -> Unit)? = null,
     onDoubleTap: (() -> Unit)? = null
 ) {
+    // 1. Stabilize callbacks to prevent pointerInput from restarting
+    val currentOnMove by rememberUpdatedState(onMove)
+    val currentOnTap by rememberUpdatedState(onTap)
+    val currentOnDoubleTap by rememberUpdatedState(onDoubleTap)
+
     val scale = radiusScale.coerceIn(0.25f, 0.50f)
 
-    var viewSize by remember { mutableStateOf(IntSize.Zero) }
-    val centerX = viewSize.width / 2f
-    val centerY = viewSize.height / 2f
-    val minDim = min(viewSize.width, viewSize.height)
+    // 2. Use unboxed primitives and store relative offsets instead of absolute positions
+    var thumbOffsetX by remember { mutableFloatStateOf(0f) }
+    var thumbOffsetY by remember { mutableFloatStateOf(0f) }
 
-    val buttonRadius = (minDim / 2f) * scale
-    val maxTravelDistance = (minDim / 2f) * (1f - scale)
-
-    var posX by remember(centerX) { mutableStateOf(centerX) }
-    var posY by remember(centerY) { mutableStateOf(centerY) }
-
-    // Update posX and posY when center changes due to layout size changes
-    LaunchedEffect(centerX, centerY) {
-        posX = centerX
-        posY = centerY
-    }
-
-    Box(
+    // 3. Remove Box and attach pointerInput directly to Canvas to reduce node depth
+    Canvas(
         modifier = modifier
-            .onSizeChanged { viewSize = it }
-            .pointerInput(centerX, centerY, maxTravelDistance, stayPut, type, scale) {
-                if (centerX == 0f || centerY == 0f || maxTravelDistance <= 0f) return@pointerInput
+            .fillMaxSize()
+            .pointerInput(stayPut, type, scale) {
+                // Read size directly from PointerInputScope
+                val centerX = size.width / 2f
+                val centerY = size.height / 2f
+                val minDim = min(size.width, size.height).toFloat()
+                val maxTravelDistance = (minDim / 2f) * (1f - scale)
+
+                if (maxTravelDistance <= 0f) return@pointerInput
 
                 var lastTapTime = 0L
 
@@ -100,52 +96,35 @@ fun Joystick(
                         val deltaX = offset.x - centerX
                         val deltaY = offset.y - centerY
 
-                        var targetX = offset.x
-                        var targetY = offset.y
+                        var targetDx = deltaX
+                        var targetDy = deltaY
 
                         when (type) {
-                            JoystickType.TWO_AXIS_LEFT_RIGHT -> {
-                                targetY = centerY
-                            }
-                            JoystickType.TWO_AXIS_UP_DOWN -> {
-                                targetX = centerX
-                            }
+                            JoystickType.TWO_AXIS_LEFT_RIGHT -> targetDy = 0f
+                            JoystickType.TWO_AXIS_UP_DOWN -> targetDx = 0f
                             JoystickType.FOUR_AXIS -> {
-                                if (abs(deltaX) > abs(deltaY)) {
-                                    targetY = centerY
-                                } else {
-                                    targetX = centerX
-                                }
+                                if (abs(deltaX) > abs(deltaY)) targetDy = 0f else targetDx = 0f
                             }
-                            JoystickType.EIGHT_AXIS -> {
-                                // No restriction
-                            }
+                            JoystickType.EIGHT_AXIS -> { /* No restriction */ }
                         }
 
-                        val dx = targetX - centerX
-                        val dy = targetY - centerY
-                        val distance = sqrt(dx * dx + dy * dy)
+                        val distance = sqrt(targetDx * targetDx + targetDy * targetDy)
 
-                        val clampedX: Float
-                        val clampedY: Float
                         if (distance > maxTravelDistance) {
-                            clampedX = (dx * maxTravelDistance / distance + centerX)
-                            clampedY = (dy * maxTravelDistance / distance + centerY)
+                            thumbOffsetX = targetDx * maxTravelDistance / distance
+                            thumbOffsetY = targetDy * maxTravelDistance / distance
                         } else {
-                            clampedX = targetX
-                            clampedY = targetY
+                            thumbOffsetX = targetDx
+                            thumbOffsetY = targetDy
                         }
 
-                        posX = clampedX
-                        posY = clampedY
+                        val power = (100 * sqrt(thumbOffsetX * thumbOffsetX + thumbOffsetY * thumbOffsetY) / maxTravelDistance).toDouble()
 
-                        val power = (100 * sqrt(
-                            (posX - centerX) * (posX - centerX) + (posY - centerY) * (posY - centerY)
-                        ) / maxTravelDistance).toDouble()
-                        val angle = atan2((centerY - posY).toDouble(), (centerX - posX).toDouble())
+                        // Preserving original math logic by negating offsets
+                        val angle = atan2(-thumbOffsetY.toDouble(), -thumbOffsetX.toDouble())
                         val direction = calculateDirection(Math.toDegrees(angle))
 
-                        onMove(angle, power, direction)
+                        currentOnMove(angle, power, direction)
                     }
 
                     updatePosition(down.position)
@@ -160,18 +139,17 @@ fun Joystick(
                             change.consume()
                         }
                         if (event.changes.all { !it.pressed }) {
-                            // All pointers released
                             if (!dragTriggered) {
                                 if (isDoubleTap) {
-                                    onDoubleTap?.invoke()
+                                    currentOnDoubleTap?.invoke()
                                 } else {
-                                    onTap?.invoke()
+                                    currentOnTap?.invoke()
                                 }
                             }
                             if (!stayPut) {
-                                posX = centerX
-                                posY = centerY
-                                onMove(0.0, 0.0, JoystickDirection.CENTER)
+                                thumbOffsetX = 0f
+                                thumbOffsetY = 0f
+                                currentOnMove(0.0, 0.0, JoystickDirection.CENTER)
                             }
                             break
                         }
@@ -179,38 +157,47 @@ fun Joystick(
                 }
             }
     ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            if (centerX == 0f || centerY == 0f) return@Canvas
+        // Read size directly from DrawScope
+        val centerX = size.width / 2f
+        val centerY = size.height / 2f
+        val minDim = min(size.width, size.height)
+        val maxTravelDistance = (minDim / 2f) * (1f - scale)
+        val buttonRadius = (minDim / 2f) * scale
 
-            // Draw Background Pad
-            if (padPainter != null) {
-                translate(left = centerX - maxTravelDistance, top = centerY - maxTravelDistance) {
-                    with(padPainter) {
-                        draw(size = Size(maxTravelDistance * 2, maxTravelDistance * 2))
-                    }
-                }
-            } else {
-                drawCircle(
-                    color = padColor,
-                    radius = maxTravelDistance,
-                    center = Offset(centerX, centerY)
-                )
-            }
+        if (centerX == 0f || centerY == 0f) return@Canvas
 
-            // Draw Button
-            if (buttonPainter != null) {
-                translate(left = posX - buttonRadius, top = posY - buttonRadius) {
-                    with(buttonPainter) {
-                        draw(size = Size(buttonRadius * 2, buttonRadius * 2))
-                    }
+        // Draw Background Pad
+        if (padPainter != null) {
+            translate(left = centerX - maxTravelDistance, top = centerY - maxTravelDistance) {
+                with(padPainter) {
+                    draw(size = Size(maxTravelDistance * 2, maxTravelDistance * 2))
                 }
-            } else {
-                drawCircle(
-                    color = buttonColor,
-                    radius = buttonRadius,
-                    center = Offset(posX, posY)
-                )
             }
+        } else {
+            drawCircle(
+                color = padColor,
+                radius = maxTravelDistance,
+                center = Offset(centerX, centerY)
+            )
+        }
+
+        // Calculate absolute position on the fly during Draw Phase
+        val posX = centerX + thumbOffsetX
+        val posY = centerY + thumbOffsetY
+
+        // Draw Button
+        if (buttonPainter != null) {
+            translate(left = posX - buttonRadius, top = posY - buttonRadius) {
+                with(buttonPainter) {
+                    draw(size = Size(buttonRadius * 2, buttonRadius * 2))
+                }
+            }
+        } else {
+            drawCircle(
+                color = buttonColor,
+                radius = buttonRadius,
+                center = Offset(posX, posY)
+            )
         }
     }
 }
