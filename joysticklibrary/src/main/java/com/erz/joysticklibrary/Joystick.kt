@@ -81,18 +81,17 @@ fun Joystick(
 
                 if (maxTravelDistance <= 0f) return@pointerInput
 
+                val touchSlop = viewConfiguration.touchSlop
                 var lastTapTime = 0L
 
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
                     val now = System.currentTimeMillis()
                     val isDoubleTap = now - lastTapTime < 300L
-                    lastTapTime = now
 
                     var dragTriggered = false
                     val pointerId = down.id
 
-                    // Performance Fix: Pass raw primitive coordinates to avoid object allocations in high-frequency loops
                     fun updatePosition(rawX: Float, rawY: Float) {
                         val deltaX = rawX - centerX
                         val deltaY = rawY - centerY
@@ -111,13 +110,21 @@ fun Joystick(
 
                         val distance = sqrt(targetDx * targetDx + targetDy * targetDy)
 
+                        val newOffsetX: Float
+                        val newOffsetY: Float
                         if (distance > maxTravelDistance) {
-                            thumbOffsetX = targetDx * maxTravelDistance / distance
-                            thumbOffsetY = targetDy * maxTravelDistance / distance
+                            newOffsetX = targetDx * maxTravelDistance / distance
+                            newOffsetY = targetDy * maxTravelDistance / distance
                         } else {
-                            thumbOffsetX = targetDx
-                            thumbOffsetY = targetDy
+                            newOffsetX = targetDx
+                            newOffsetY = targetDy
                         }
+
+                        // Skip callback if thumb position hasn't meaningfully changed
+                        if (newOffsetX == thumbOffsetX && newOffsetY == thumbOffsetY) return
+
+                        thumbOffsetX = newOffsetX
+                        thumbOffsetY = newOffsetY
 
                         val power = (100 * sqrt(thumbOffsetX * thumbOffsetX + thumbOffsetY * thumbOffsetY) / maxTravelDistance).toDouble()
                         val angle = atan2(-thumbOffsetY.toDouble(), -thumbOffsetX.toDouble())
@@ -131,11 +138,18 @@ fun Joystick(
                     while (true) {
                         val event = awaitPointerEvent()
 
-                        // Performance Fix: Avoid checking all items if the tracked pointer hasn't changed
                         val change = event.changes.firstOrNull { it.id == pointerId }
 
                         if (change != null && change.positionChanged()) {
-                            dragTriggered = true
+                            // Only count as drag if movement exceeds touch slop
+                            if (!dragTriggered) {
+                                val totalDragX = change.position.x - down.position.x
+                                val totalDragY = change.position.y - down.position.y
+                                val totalDrag = sqrt(totalDragX * totalDragX + totalDragY * totalDragY)
+                                if (totalDrag > touchSlop) {
+                                    dragTriggered = true
+                                }
+                            }
                             updatePosition(change.position.x, change.position.y)
                             change.consume()
                         }
@@ -144,8 +158,10 @@ fun Joystick(
                             if (!dragTriggered) {
                                 if (isDoubleTap) {
                                     currentOnDoubleTap?.invoke()
+                                    lastTapTime = 0L // Reset to prevent triple-tap as double
                                 } else {
                                     currentOnTap?.invoke()
+                                    lastTapTime = now // Only record tap time for actual taps
                                 }
                             }
                             if (!stayPut) {
