@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="160dp"
+    android:height="160dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    
+    <!-- Outer Ring -->
+    <path
+        android:strokeColor="#FF03DAC6"
+        android:strokeWidth="2"
+        android:pathData="M 50 2 A 48 48 0 1 1 49.99 2 Z" />
+        
+    <!-- Outer Glow Ring (larger stroke, semi-transparent) -->
+    <path
+        android:strokeColor="#3303DAC6"
+        android:strokeWidth="6"
+        android:pathData="M 50 2 A 48 48 0 1 1 49.99 2 Z" />
+
+    <!-- Inner concentric ring -->
+    <path
+        android:strokeColor="#33FFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M 50 20 A 30 30 0 1 1 49.99 20 Z" />
+
+    <!-- Crosshairs -->
+    <path
+        android:strokeColor="#66FFFFFF"
+        android:strokeWidth="1"
+        android:pathData="M 50 10 L 50 25 M 50 75 L 50 90 M 10 50 L 25 50 M 75 50 L 90 50" />
+        
+    <!-- Center Dot -->
+    <path
+        android:fillColor="#FF03DAC6"
+        android:pathData="M 50 47 A 3 3 0 1 1 49.9 47 Z" />
+</vector>
