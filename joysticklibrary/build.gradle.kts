@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.compiler)
+    `maven-publish`
 }
 
 android {
@@ -31,6 +32,12 @@ android {
     buildFeatures {
         compose = true
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
@@ -43,3 +50,18 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 }
+
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            groupId = "com.github.erz05"
+            artifactId = "JoyStick"
+            version = "2.0.0"
+
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
+    }
+}
+

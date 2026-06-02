@@ -3,7 +3,7 @@
 An Android Library for JoyStick View & Composable.
 Customizable, small, lightweight, and modern.
 
-[![Download](https://api.bintray.com/packages/erz05/maven/JoyStick/images/download.svg)](https://bintray.com/erz05/maven/JoyStick/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-JoyStick-blue.svg?style=flat)](http://android-arsenal.com/details/1/2712)
+[![JitPack](https://jitpack.io/v/erz05/JoyStick.svg)](https://jitpack.io/#erz05/JoyStick) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-JoyStick-blue.svg?style=flat)](http://android-arsenal.com/details/1/2712)
 
 ---
 
@@ -133,7 +133,20 @@ joyStick.setListener(object : JoyStick.JoyStickListener {
 
 To include the library in your Gradle project:
 
-### Version Catalog (`libs.versions.toml`)
+### 1. Add the JitPack Repository
+In your `settings.gradle.kts` (or project-level `build.gradle.kts`):
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+```
+
+### 2. Version Catalog (`libs.versions.toml`)
 ```toml
 [libraries]
 joystick = { module = "com.github.erz05:JoyStick", version = "2.0.0" }
