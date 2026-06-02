@@ -1,0 +1,34 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Solid Flat Background (Dark Zinc) -->
+  <rect width="512" height="512" rx="128" fill="#18181B"/>
+
+  <!-- CONTROLLER BODY SILHOUETTE (Solid White Casing, Centered) -->
+  <rect x="128" y="140" width="256" height="232" rx="48" fill="#F4F4F5"/>
+
+  <!-- SELECT / START BUTTON CUTOUTS (Bottom Center, Straight / No Rotation) -->
+  <!-- Select Button -->
+  <rect x="234" y="324" width="16" height="6" rx="3" fill="#18181B"/>
+  <!-- Start Button -->
+  <rect x="262" y="324" width="16" height="6" rx="3" fill="#18181B"/>
+
+  <!-- DECORATIVE RETRO STRIPE CUTOUTS (Top-Right) -->
+  <rect x="336" y="164" width="4" height="40" rx="2" fill="#18181B"/>
+  <rect x="344" y="164" width="4" height="40" rx="2" fill="#18181B"/>
+  <rect x="352" y="164" width="4" height="40" rx="2" fill="#18181B"/>
+
+  <!-- RIGHT SIDE: ACTION BUTTON CUTOUT (Horizontally Aligned at cy=256) -->
+  <circle cx="316" cy="256" r="24" fill="#18181B"/>
+  <circle cx="316" cy="256" r="14" fill="#F4F4F5"/>
+
+  <!-- LEFT SIDE: JOYSTICK SILHOUETTE (Thinner Stick, Extra-Large Ball Knob) -->
+  <!-- Joystick Base / Slot -->
+  <circle cx="196" cy="256" r="44" fill="#18181B"/>
+
+  <!-- Joystick Stick & Knob Background (Thinner stick, bigger ball cutout) -->
+  <line x1="196" y1="256" x2="216" y2="140" stroke="#18181B" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="216" cy="140" r="56" fill="#18181B"/>
+
+  <!-- Joystick Stick & Knob Foreground (Thinner stick, bigger white silhouette ball) -->
+  <line x1="196" y1="256" x2="216" y2="140" stroke="#F4F4F5" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="216" cy="140" r="42" fill="#F4F4F5"/>
+</svg>
