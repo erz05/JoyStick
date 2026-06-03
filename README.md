@@ -149,9 +149,9 @@ The repository includes a fully featured demo app that showcases the capabilitie
 
 ### Screenshots
 
-| Droid Controls | HUD Configurations | Real-Time State |
-|:---:|:---:|:---:|
-| ![Demo Screenshot 1](images/Screenshot_2015-10-30-21-38-13.png) | ![Demo Screenshot 2](images/Screenshot_2015-10-30-21-43-47.png) | ![Demo Screenshot 3](images/Screenshot_2015-11-02-18-05-49.png) |
+|                       Portrait                       |                       Landscape                       |
+|:----------------------------------------------------:|:-----------------------------------------------------:|
+| ![Demo Screenshot 1](images/Screenshot_portrait.png) | ![Demo Screenshot 2](images/Screenshot_landscape.png) |
 
 ### Installing and Running the Demo
 
