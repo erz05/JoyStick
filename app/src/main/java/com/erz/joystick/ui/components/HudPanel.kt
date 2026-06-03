@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,8 +41,15 @@ fun HudPanel(
     modifier: Modifier = Modifier
 ) {
     val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
+    val fontScale = density.fontScale
     val portraitScreenWidth = minOf(configuration.screenWidthDp, configuration.screenHeightDp)
     val panelWidth = (portraitScreenWidth * 0.9f).dp
+
+    // Calculate non-scalable font sizes based on panel width percentage to prevent layout breaking
+    val titleFontSize = ((panelWidth.value * 0.031f) / fontScale).sp
+    val bodyFontSize = ((panelWidth.value * 0.028f) / fontScale).sp
+    val labelFontSize = ((panelWidth.value * 0.025f) / fontScale).sp
 
     var isExpanded by remember { mutableStateOf(true) }
 
@@ -64,14 +72,14 @@ fun HudPanel(
             Text(
                 text = "JOYSTICK CONTROLS COMPOSABLE DEMO",
                 color = Color(0xFF03DAC6),
-                fontSize = 11.sp,
+                fontSize = titleFontSize,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace
             )
             Text(
                 text = if (isExpanded) "▲" else "▼",
                 color = Color(0xFF03DAC6),
-                fontSize = 11.sp,
+                fontSize = titleFontSize,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace
             )
@@ -90,25 +98,25 @@ fun HudPanel(
                         Text(
                             text = "LEFT: MOVEMENT",
                             color = Color.White,
-                            fontSize = 11.sp,
+                            fontSize = titleFontSize,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = "Dir: ${moveDirectionProvider()}",
                             color = Color.Gray,
-                            fontSize = 10.sp,
+                            fontSize = bodyFontSize,
                             fontFamily = FontFamily.Monospace
                         )
                         Text(
                             text = "Angle: ${String.format("%.1f", Math.toDegrees(moveAngleProvider()))}°",
                             color = Color.Gray,
-                            fontSize = 10.sp,
+                            fontSize = bodyFontSize,
                             fontFamily = FontFamily.Monospace
                         )
                         Text(
                             text = "Power: ${String.format("%.1f", movePowerProvider())}%",
                             color = Color.Gray,
-                            fontSize = 10.sp,
+                            fontSize = bodyFontSize,
                             fontFamily = FontFamily.Monospace
                         )
                     }
@@ -118,25 +126,25 @@ fun HudPanel(
                         Text(
                             text = "RIGHT: ROTATION",
                             color = Color.White,
-                            fontSize = 11.sp,
+                            fontSize = titleFontSize,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = "Dir: ${rotationDirectionProvider()}",
                             color = Color.Gray,
-                            fontSize = 10.sp,
+                            fontSize = bodyFontSize,
                             fontFamily = FontFamily.Monospace
                         )
                         Text(
                             text = "Rotation: ${String.format("%.1f", rotationAngleProvider())}°",
                             color = Color.Gray,
-                            fontSize = 10.sp,
+                            fontSize = bodyFontSize,
                             fontFamily = FontFamily.Monospace
                         )
                         Text(
                             text = "Power: ${String.format("%.1f", rotationPowerProvider())}%",
                             color = Color.Gray,
-                            fontSize = 10.sp,
+                            fontSize = bodyFontSize,
                             fontFamily = FontFamily.Monospace
                         )
                     }
@@ -165,7 +173,7 @@ fun HudPanel(
                             Text(
                                 text = "LEFT AXIS MODE",
                                 color = Color.White,
-                                fontSize = 10.sp,
+                                fontSize = bodyFontSize,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(4.dp))
@@ -188,7 +196,7 @@ fun HudPanel(
                                         .replace("EIGHT_", "8-Axis")
                                     Text(
                                         text = "$currentText ▼",
-                                        fontSize = 11.sp,
+                                        fontSize = titleFontSize,
                                         fontWeight = FontWeight.Medium
                                     )
                                 }
@@ -209,7 +217,7 @@ fun HudPanel(
                                                 Text(
                                                     text = typeText,
                                                     color = if (isSelected) Color(0xFF03DAC6) else Color.White,
-                                                    fontSize = 11.sp,
+                                                    fontSize = titleFontSize,
                                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                                                 )
                                             },
@@ -228,7 +236,7 @@ fun HudPanel(
                             Text(
                                 text = "RIGHT AXIS MODE",
                                 color = Color.White,
-                                fontSize = 10.sp,
+                                fontSize = bodyFontSize,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(4.dp))
@@ -251,7 +259,7 @@ fun HudPanel(
                                         .replace("EIGHT_", "8-Axis")
                                     Text(
                                         text = "$currentText ▼",
-                                        fontSize = 11.sp,
+                                        fontSize = titleFontSize,
                                         fontWeight = FontWeight.Medium
                                     )
                                 }
@@ -272,7 +280,7 @@ fun HudPanel(
                                                 Text(
                                                     text = typeText,
                                                     color = if (isSelected) Color(0xFF03DAC6) else Color.White,
-                                                    fontSize = 11.sp,
+                                                    fontSize = titleFontSize,
                                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                                                 )
                                             },
@@ -310,7 +318,7 @@ fun HudPanel(
                             Text(
                                 text = "StayPut L",
                                 color = Color.White,
-                                fontSize = 9.sp
+                                fontSize = labelFontSize
                             )
                         }
 
@@ -330,7 +338,7 @@ fun HudPanel(
                             Text(
                                 text = "StayPut R",
                                 color = Color.White,
-                                fontSize = 9.sp
+                                fontSize = labelFontSize
                             )
                         }
                     }
