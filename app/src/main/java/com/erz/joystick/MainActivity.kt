@@ -1,6 +1,11 @@
 package com.erz.joystick
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
@@ -19,6 +24,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -29,6 +35,8 @@ import androidx.compose.ui.unit.sp
 import com.erz.joysticklibrary.Joystick
 import com.erz.joysticklibrary.JoystickDirection
 import com.erz.joysticklibrary.JoystickType
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
@@ -63,12 +71,50 @@ class ComposeStar(
     val radius: Float
 )
 
+class Ball(
+    var x: Float,
+    var y: Float,
+    val vx: Float,
+    val vy: Float,
+    val radius: Float,
+    val color: Color = Color(0xFF03DAC6)
+)
+
+fun triggerHapticFeedback(vibrator: Vibrator?, isDoubleTap: Boolean) {
+    if (vibrator == null || !vibrator.hasVibrator()) return
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        val effectId = if (isDoubleTap) {
+            VibrationEffect.EFFECT_DOUBLE_CLICK
+        } else {
+            VibrationEffect.EFFECT_CLICK
+        }
+        try {
+            vibrator.vibrate(VibrationEffect.createPredefined(effectId))
+        } catch (e: Exception) {
+            val pattern = if (isDoubleTap) {
+                longArrayOf(0, 40, 50, 40)
+            } else {
+                longArrayOf(0, 20)
+            }
+            vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1))
+        }
+    } else {
+        @Suppress("DEPRECATION")
+        if (isDoubleTap) {
+            vibrator.vibrate(longArrayOf(0, 40, 50, 40), -1)
+        } else {
+            vibrator.vibrate(20)
+        }
+    }
+}
+
 @Composable
 fun JoystickDemoScreen() {
     var screenWidth by remember { mutableStateOf(0f) }
     var screenHeight by remember { mutableStateOf(0f) }
 
     val stars = remember { mutableStateListOf<ComposeStar>() }
+    val balls = remember { mutableStateListOf<Ball>() }
 
     // Droid state
     var droidX by remember { mutableStateOf(0f) }
@@ -78,6 +124,21 @@ fun JoystickDemoScreen() {
     val density = LocalDensity.current
     val droidSizePx = remember(density) { with(density) { droidSize.toPx() } }
     val droidRadius = droidSizePx / 2f
+    val ballRadiusPx = remember(density) { with(density) { 6.dp.toPx() } }
+
+    val coroutineScope = rememberCoroutineScope()
+    var frameTime by remember { mutableStateOf(0L) }
+
+    val context = LocalContext.current
+    val vibrator = remember(context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+            vibratorManager?.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+        }
+    }
 
     // Joystick states
     var moveAngle by remember { mutableStateOf(0.0) }
@@ -93,6 +154,27 @@ fun JoystickDemoScreen() {
     // Settings
     var selectedJoystickType by remember { mutableStateOf(JoystickType.EIGHT_AXIS) }
     var stayPutLeft by remember { mutableStateOf(false) }
+
+    val fireBall = {
+        val rad = Math.toRadians((droidRotation.toDouble() - 90.0))
+        val ballSpeed = 16f
+        val vx = cos(rad).toFloat() * ballSpeed
+        val vy = sin(rad).toFloat() * ballSpeed
+
+        val startX = droidX + cos(rad).toFloat() * droidRadius
+        val startY = droidY + sin(rad).toFloat() * droidRadius
+
+        balls.add(
+            Ball(
+                x = startX,
+                y = startY,
+                vx = vx,
+                vy = vy,
+                radius = ballRadiusPx,
+                color = Color(0xFF03DAC6)
+            )
+        )
+    }
 
     // LaunchedEffect for the Game Loop
     LaunchedEffect(screenWidth, screenHeight) {
@@ -119,7 +201,9 @@ fun JoystickDemoScreen() {
         }
 
         while (true) {
-            withFrameMillis {
+            withFrameMillis { time ->
+                frameTime = time
+
                 // Update stars position
                 stars.forEach { star ->
                     star.y += star.speed
@@ -127,6 +211,18 @@ fun JoystickDemoScreen() {
                         star.y = 0f
                         star.x = Random.nextFloat() * screenWidth
                     }
+                }
+
+                // Update balls position
+                for (i in balls.indices) {
+                    val ball = balls.getOrNull(i) ?: continue
+                    ball.x += ball.vx
+                    ball.y += ball.vy
+                }
+                // Clean up off-screen balls
+                balls.removeAll { ball ->
+                    ball.x < -50f || ball.x > screenWidth + 50f ||
+                    ball.y < -50f || ball.y > screenHeight + 50f
                 }
 
                 // Update droid position from left joystick
@@ -170,6 +266,23 @@ fun JoystickDemoScreen() {
                     color = Color.White.copy(alpha = Random.nextFloat() * 0.3f + 0.7f),
                     radius = star.radius,
                     center = Offset(star.x, star.y)
+                )
+            }
+
+            // Draw active projectiles (balls)
+            val _tick = frameTime // Subscribe to frame updates
+            balls.forEach { ball ->
+                // Outer glow
+                drawCircle(
+                    color = ball.color.copy(alpha = 0.3f),
+                    radius = ball.radius * 2f,
+                    center = Offset(ball.x, ball.y)
+                )
+                // Inner core
+                drawCircle(
+                    color = ball.color,
+                    radius = ball.radius,
+                    center = Offset(ball.x, ball.y)
                 )
             }
         }
@@ -299,6 +412,19 @@ fun JoystickDemoScreen() {
                     rotationAngle = angle
                     rotationPower = power
                     rotationDirection = direction
+                },
+                onTap = {
+                    fireBall()
+                    triggerHapticFeedback(vibrator, isDoubleTap = false)
+                },
+                onDoubleTap = {
+                    coroutineScope.launch {
+                        repeat(5) { index ->
+                            fireBall()
+                            triggerHapticFeedback(vibrator, isDoubleTap = (index == 0))
+                            delay(80)
+                        }
+                    }
                 }
             )
         }
