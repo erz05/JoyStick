@@ -1,9 +1,11 @@
 # JoyStick
 
+![JoyStick Logo](images/logo.svg)
+
 An Android Library for JoyStick View & Composable.
 Customizable, small, lightweight, and modern.
 
-[![JitPack](https://jitpack.io/v/erz05/JoyStick.svg)](https://jitpack.io/#erz05/JoyStick) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-JoyStick-blue.svg?style=flat)](http://android-arsenal.com/details/1/2712)
+[![JitPack](https://jitpack.io/v/erz05/JoyStick.svg)](https://jitpack.io/#erz05/JoyStick)
 
 ---
 
