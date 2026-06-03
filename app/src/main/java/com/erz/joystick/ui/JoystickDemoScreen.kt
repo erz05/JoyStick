@@ -83,7 +83,7 @@ fun JoystickDemoScreen(
             )
         }
 
-        // 3. HUD Display Card
+        // 3. HUD Display Card (now includes Axis Mode and StayPut settings)
         HudPanel(
             moveDirectionProvider = { viewModel.moveDirection },
             moveAngleProvider = { viewModel.moveAngle },
@@ -91,27 +91,26 @@ fun JoystickDemoScreen(
             rotationDirectionProvider = { viewModel.rotationDirection },
             rotationAngleProvider = { viewModel.droidRotation },
             rotationPowerProvider = { viewModel.rotationPower },
+            selectedJoystickType = viewModel.selectedJoystickType,
+            selectedJoystickTypeRight = viewModel.selectedJoystickTypeRight,
+            stayPutLeft = viewModel.stayPutLeft,
+            stayPutRight = viewModel.stayPutRight,
+            onTypeSelected = { viewModel.setJoystickType(it) },
+            onTypeSelectedRight = { viewModel.setJoystickTypeRight(it) },
+            onStayPutChanged = { viewModel.updateStayPutLeft(it) },
+            onStayPutChangedRight = { viewModel.updateStayPutRight(it) },
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .statusBarsPadding()
                 .padding(top = 16.dp)
         )
 
-        // 4. Middle Settings Panel
-        SettingsPanel(
-            selectedJoystickType = viewModel.selectedJoystickType,
-            stayPutLeft = viewModel.stayPutLeft,
-            onTypeSelected = { viewModel.setJoystickType(it) },
-            onStayPutChanged = { viewModel.updateStayPutLeft(it) },
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 16.dp)
-        )
-
         // 5. Controls Overlay (Bottom Joysticks)
         JoystickControls(
             selectedJoystickType = viewModel.selectedJoystickType,
+            selectedJoystickTypeRight = viewModel.selectedJoystickTypeRight,
             stayPutLeft = viewModel.stayPutLeft,
+            stayPutRight = viewModel.stayPutRight,
             onMoveLeft = { angle, power, dir -> viewModel.onMoveLeft(angle, power, dir) },
             onMoveRight = { angle, power, dir -> viewModel.onMoveRight(angle, power, dir) },
             onTapRight = { viewModel.fireBall() },

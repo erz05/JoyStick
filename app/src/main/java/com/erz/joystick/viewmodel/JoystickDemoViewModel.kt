@@ -37,7 +37,11 @@ class JoystickDemoViewModel : ViewModel() {
     // Configuration Settings
     var selectedJoystickType by mutableStateOf(JoystickType.EIGHT_AXIS)
         private set
+    var selectedJoystickTypeRight by mutableStateOf(JoystickType.EIGHT_AXIS)
+        private set
     var stayPutLeft by mutableStateOf(false)
+        private set
+    var stayPutRight by mutableStateOf(true)
         private set
 
     // Left Joystick UI State
@@ -103,8 +107,16 @@ class JoystickDemoViewModel : ViewModel() {
         selectedJoystickType = type
     }
 
+    fun setJoystickTypeRight(type: JoystickType) {
+        selectedJoystickTypeRight = type
+    }
+
     fun updateStayPutLeft(stayPut: Boolean) {
         stayPutLeft = stayPut
+    }
+
+    fun updateStayPutRight(stayPut: Boolean) {
+        stayPutRight = stayPut
     }
 
     fun onMoveLeft(angle: Double, power: Double, direction: JoystickDirection) {

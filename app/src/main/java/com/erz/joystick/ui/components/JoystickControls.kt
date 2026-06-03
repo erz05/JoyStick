@@ -19,7 +19,9 @@ import com.erz.joysticklibrary.JoystickType
 @Composable
 fun JoystickControls(
     selectedJoystickType: JoystickType,
+    selectedJoystickTypeRight: JoystickType,
     stayPutLeft: Boolean,
+    stayPutRight: Boolean,
     onMoveLeft: (Double, Double, JoystickDirection) -> Unit,
     onMoveRight: (Double, Double, JoystickDirection) -> Unit,
     onTapRight: () -> Unit,
@@ -65,11 +67,12 @@ fun JoystickControls(
         // This joystick demonstrates usage of custom image assets (Painters) for both the
         // background pad and front button thumb, along with tap and double-tap gestures:
         //
-        // 1. stayPut = true prevents the rotation from snapping back to zero when the user lets go.
-        // 2. padPainter & buttonPainter load SVG/XML custom assets to style the controls.
-        // 3. onMove updates the rotation angle in degrees, allowing the droid to face the control angle.
-        // 4. onTap handles single click events to fire a single ball.
-        // 5. onDoubleTap handles rapid double-tap events to execute a coroutine-based 5-ball rapid fire sequence.
+        // 1. type = selectedJoystickTypeRight configures axis restrictions dynamically.
+        // 2. stayPut = stayPutRight controls whether the button snaps back or stays at the offset.
+        // 3. padPainter & buttonPainter load SVG/XML custom assets to style the controls.
+        // 4. onMove updates the rotation angle in degrees, allowing the droid to face the control angle.
+        // 5. onTap handles single click events to fire a single ball.
+        // 6. onDoubleTap handles rapid double-tap events to execute a coroutine-based 5-ball rapid fire sequence.
         // ---------------------------------------------------------------------------------
         Joystick(
             modifier = Modifier
@@ -77,7 +80,8 @@ fun JoystickControls(
                 .clip(RoundedCornerShape(80.dp))
                 .background(Color(0x1AFFFFFF))
                 .border(2.dp, Color(0x33FFFFFF), RoundedCornerShape(80.dp)),
-            stayPut = true, // Right joystick stays put
+            type = selectedJoystickTypeRight,
+            stayPut = stayPutRight,
             padPainter = painterResource(id = R.drawable.pad),
             buttonPainter = painterResource(id = R.drawable.button),
             onMove = onMoveRight,
