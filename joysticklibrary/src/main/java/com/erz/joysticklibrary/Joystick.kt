@@ -45,8 +45,8 @@ enum class JoystickDirection(val value: Int) {
 enum class JoystickType(val value: Int) {
     EIGHT_AXIS(11),
     FOUR_AXIS(22),
-    TWO_AXIS_LEFT_RIGHT(33),
-    TWO_AXIS_UP_DOWN(44)
+    TWO_AXIS_HORIZONTAL(33),
+    TWO_AXIS_VERTICAL(44)
 }
 
 @Composable
@@ -102,8 +102,8 @@ fun Joystick(
                         var targetDy = deltaY
 
                         when (type) {
-                            JoystickType.TWO_AXIS_LEFT_RIGHT -> targetDy = 0f
-                            JoystickType.TWO_AXIS_UP_DOWN -> targetDx = 0f
+                            JoystickType.TWO_AXIS_HORIZONTAL -> targetDy = 0f
+                            JoystickType.TWO_AXIS_VERTICAL -> targetDx = 0f
                             JoystickType.FOUR_AXIS -> {
                                 if (abs(deltaX) > abs(deltaY)) targetDy = 0f else targetDx = 0f
                             }

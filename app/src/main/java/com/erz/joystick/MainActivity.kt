@@ -291,7 +291,7 @@ fun JoystickDemoScreen() {
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(4.dp))
-            JoystickType.values().forEach { type ->
+            JoystickType.entries.forEach { type ->
                 val isSelected = selectedJoystickType == type
                 Button(
                     onClick = { selectedJoystickType = type },
