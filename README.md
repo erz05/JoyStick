@@ -131,6 +131,47 @@ joyStick.setListener(object : JoyStick.JoyStickListener {
 
 ---
 
+## 📱 Demo Application
+
+The repository includes a fully featured demo app that showcases the capabilities of both the Jetpack Compose `Joystick` and legacy `JoyStick` configurations:
+
+- **Dual Joystick Controls**:
+  - **Left Joystick**: Controls the movement of a Droid character inside a scrollable starfield.
+  - **Right Joystick**: Controls the rotation and aiming of the Droid.
+- **Action Triggers**:
+  - **Single Tap**: Fire a single projectile from the Droid.
+  - **Double Tap**: Fire a rapid-fire burst of projectiles.
+- **Dynamic Configuration (HUD)**:
+  - Toggle between different axis limits (`JoystickType`): EIGHT_AXIS, FOUR_AXIS, TWO_AXIS_LEFT_RIGHT, TWO_AXIS_UP_DOWN.
+  - Enable or disable `stayPut` behavior for each joystick independently.
+  - Real-time display of coordinate angle, power, and directional state.
+- **Haptic Feedback**: Custom haptic feedback responses for tap and double-tap events.
+
+### Screenshots
+
+| Droid Controls | HUD Configurations | Real-Time State |
+|:---:|:---:|:---:|
+| ![Demo Screenshot 1](images/Screenshot_2015-10-30-21-38-13.png) | ![Demo Screenshot 2](images/Screenshot_2015-10-30-21-43-47.png) | ![Demo Screenshot 3](images/Screenshot_2015-11-02-18-05-49.png) |
+
+### Installing and Running the Demo
+
+To run the demo application locally:
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/erz05/JoyStick.git
+   cd JoyStick
+   ```
+2. **Open in Android Studio**:
+   - Open Android Studio and select **File > Open**.
+   - Navigate to the cloned `JoyStick` directory and click **Open**.
+3. **Build & Run**:
+   - Let Gradle sync complete.
+   - Select the `app` run configuration from the dropdown at the top.
+   - Click the **Run** button to build and install it on your connected Android device or emulator.
+
+---
+
 ## 📦 Installation
 
 To include the library in your Gradle project:
