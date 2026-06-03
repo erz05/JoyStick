@@ -76,13 +76,6 @@ fun Joystick(
         modifier = modifier
             .fillMaxSize()
             .pointerInput(stayPut, type, scale) {
-                val centerX = size.width / 2f
-                val centerY = size.height / 2f
-                val minDim = min(size.width, size.height).toFloat()
-                val maxTravelDistance = (minDim / 2f) * (1f - scale)
-
-                if (maxTravelDistance <= 0f) return@pointerInput
-
                 val touchSlop = viewConfiguration.touchSlop
                 var lastTapTime = 0L
 
@@ -95,6 +88,15 @@ fun Joystick(
                     val pointerId = down.id
 
                     fun updatePosition(rawX: Float, rawY: Float) {
+                        val currentWidth = size.width
+                        val currentHeight = size.height
+                        val centerX = currentWidth / 2f
+                        val centerY = currentHeight / 2f
+                        val minDim = min(currentWidth, currentHeight).toFloat()
+                        val maxTravelDistance = (minDim / 2f) * (1f - scale)
+
+                        if (maxTravelDistance <= 0f) return
+
                         val deltaX = rawX - centerX
                         val deltaY = rawY - centerY
 
@@ -122,14 +124,14 @@ fun Joystick(
                             newOffsetY = targetDy
                         }
 
-                        // Skip callback if thumb position hasn't meaningfully changed
-                        if (newOffsetX == thumbOffsetX && newOffsetY == thumbOffsetY) return
+                        // Skip callback if thumb position hasn't meaningfully changed (prevent micro-jitter)
+                        if (abs(newOffsetX - thumbOffsetX) < 0.01f && abs(newOffsetY - thumbOffsetY) < 0.01f) return
 
                         thumbOffsetX = newOffsetX
                         thumbOffsetY = newOffsetY
 
-                        val power = (100 * sqrt(thumbOffsetX * thumbOffsetX + thumbOffsetY * thumbOffsetY) / maxTravelDistance).toDouble()
-                        val angle = atan2(-thumbOffsetY.toDouble(), -thumbOffsetX.toDouble())
+                        val power = (100f * sqrt(thumbOffsetX * thumbOffsetX + thumbOffsetY * thumbOffsetY) / maxTravelDistance).toDouble()
+                        val angle = atan2(-thumbOffsetY, -thumbOffsetX).toDouble()
                         val direction = calculateDirection(Math.toDegrees(angle))
 
                         currentOnMove(angle, power, direction)

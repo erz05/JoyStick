@@ -88,6 +88,8 @@ fun JoystickDemoScreen() {
     var rotationPower by remember { mutableStateOf(0.0) }
     var rotationDirection by remember { mutableStateOf(JoystickDirection.CENTER) }
 
+    val droidPositioned by remember { derivedStateOf { droidX > 0f && droidY > 0f } }
+
     // Settings
     var selectedJoystickType by remember { mutableStateOf(JoystickType.EIGHT_AXIS) }
     var stayPutLeft by remember { mutableStateOf(false) }
@@ -172,107 +174,30 @@ fun JoystickDemoScreen() {
             }
         }
 
-        // 2. Android Droid Character
-        if (droidX > 0f && droidY > 0f) {
-            Image(
-                painter = painterResource(id = R.drawable.droid),
-                contentDescription = "Android Droid",
-                modifier = Modifier
-                    .size(droidSize)
-                    .offset {
-                        IntOffset(
-                            (droidX - droidRadius).toInt(),
-                            (droidY - droidRadius).toInt()
-                        )
-                    }
-                    .graphicsLayer(
-                        rotationZ = droidRotation
-                    )
+        // 2. Android Droid Character (Deferred layout/draw phase offsets & rotation)
+        if (droidPositioned) {
+            DroidImage(
+                droidSize = droidSize,
+                droidRadius = droidRadius,
+                xProvider = { droidX },
+                yProvider = { droidY },
+                rotationProvider = { droidRotation }
             )
         }
 
-        // 3. HUD Display Card (Glassmorphic)
-        Column(
+        // 3. HUD Display Card (Recomposition Isolated)
+        HudDisplay(
+            moveDirectionProvider = { moveDirection },
+            moveAngleProvider = { moveAngle },
+            movePowerProvider = { movePower },
+            rotationDirectionProvider = { rotationDirection },
+            droidRotationProvider = { droidRotation },
+            rotationPowerProvider = { rotationPower },
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .statusBarsPadding()
                 .padding(top = 16.dp)
-                .fillMaxWidth(0.9f)
-                .clip(RoundedCornerShape(16.dp))
-                .background(Color(0x331E2433))
-                .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(16.dp))
-                .padding(12.dp)
-        ) {
-            Text(
-                text = "JOYSTICK CONTROLS COMPOSABLE DEMO",
-                color = Color(0xFF03DAC6),
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Monospace,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                // Left Joy HUD
-                Column {
-                    Text(
-                        text = "LEFT: MOVEMENT",
-                        color = Color.White,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Dir: $moveDirection",
-                        color = Color.Gray,
-                        fontSize = 10.sp,
-                        fontFamily = FontFamily.Monospace
-                    )
-                    Text(
-                        text = "Angle: ${String.format("%.1f", Math.toDegrees(moveAngle))}°",
-                        color = Color.Gray,
-                        fontSize = 10.sp,
-                        fontFamily = FontFamily.Monospace
-                    )
-                    Text(
-                        text = "Power: ${String.format("%.1f", movePower)}%",
-                        color = Color.Gray,
-                        fontSize = 10.sp,
-                        fontFamily = FontFamily.Monospace
-                    )
-                }
-
-                // Right Joy HUD
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(
-                        text = "RIGHT: ROTATION",
-                        color = Color.White,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Dir: $rotationDirection",
-                        color = Color.Gray,
-                        fontSize = 10.sp,
-                        fontFamily = FontFamily.Monospace
-                    )
-                    Text(
-                        text = "Rotation: ${String.format("%.1f", droidRotation)}°",
-                        color = Color.Gray,
-                        fontSize = 10.sp,
-                        fontFamily = FontFamily.Monospace
-                    )
-                    Text(
-                        text = "Power: ${String.format("%.1f", rotationPower)}%",
-                        color = Color.Gray,
-                        fontSize = 10.sp,
-                        fontFamily = FontFamily.Monospace
-                    )
-                }
-            }
-        }
+        )
 
         // 4. Middle settings card
         Column(
@@ -376,6 +301,122 @@ fun JoystickDemoScreen() {
                     rotationDirection = direction
                 }
             )
+        }
+    }
+}
+
+@Composable
+fun DroidImage(
+    droidSize: androidx.compose.ui.unit.Dp,
+    droidRadius: Float,
+    xProvider: () -> Float,
+    yProvider: () -> Float,
+    rotationProvider: () -> Float,
+    modifier: Modifier = Modifier
+) {
+    Image(
+        painter = painterResource(id = R.drawable.droid),
+        contentDescription = "Android Droid",
+        modifier = modifier
+            .size(droidSize)
+            .offset {
+                IntOffset(
+                    (xProvider() - droidRadius).toInt(),
+                    (yProvider() - droidRadius).toInt()
+                )
+            }
+            .graphicsLayer {
+                rotationZ = rotationProvider()
+            }
+    )
+}
+
+@Composable
+fun HudDisplay(
+    moveDirectionProvider: () -> JoystickDirection,
+    moveAngleProvider: () -> Double,
+    movePowerProvider: () -> Double,
+    rotationDirectionProvider: () -> JoystickDirection,
+    droidRotationProvider: () -> Float,
+    rotationPowerProvider: () -> Double,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth(0.9f)
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color(0x331E2433))
+            .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(16.dp))
+            .padding(12.dp)
+    ) {
+        Text(
+            text = "JOYSTICK CONTROLS COMPOSABLE DEMO",
+            color = Color(0xFF03DAC6),
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.Monospace,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Left Joy HUD
+            Column {
+                Text(
+                    text = "LEFT: MOVEMENT",
+                    color = Color.White,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Dir: ${moveDirectionProvider()}",
+                    color = Color.Gray,
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily.Monospace
+                )
+                Text(
+                    text = "Angle: ${String.format("%.1f", Math.toDegrees(moveAngleProvider()))}°",
+                    color = Color.Gray,
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily.Monospace
+                )
+                Text(
+                    text = "Power: ${String.format("%.1f", movePowerProvider())}%",
+                    color = Color.Gray,
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily.Monospace
+                )
+            }
+
+            // Right Joy HUD
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = "RIGHT: ROTATION",
+                    color = Color.White,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Dir: ${rotationDirectionProvider()}",
+                    color = Color.Gray,
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily.Monospace
+                )
+                Text(
+                    text = "Rotation: ${String.format("%.1f", droidRotationProvider())}°",
+                    color = Color.Gray,
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily.Monospace
+                )
+                Text(
+                    text = "Power: ${String.format("%.1f", rotationPowerProvider())}%",
+                    color = Color.Gray,
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily.Monospace
+                )
+            }
         }
     }
 }
