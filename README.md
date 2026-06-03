@@ -1,6 +1,6 @@
 # JoyStick
 
-![JoyStick Logo](images/logo.svg)
+![JoyStick Logo](images/logo_silhouette.svg)
 
 An Android Library for JoyStick View & Composable.
 Customizable, small, lightweight, and modern.
