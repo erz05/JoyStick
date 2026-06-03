@@ -14,6 +14,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalConfiguration
+import android.content.res.Configuration
 import com.erz.joysticklibrary.JoystickDirection
 
 @Composable
@@ -26,9 +28,13 @@ fun HudPanel(
     rotationPowerProvider: () -> Double,
     modifier: Modifier = Modifier
 ) {
+    val configuration = LocalConfiguration.current
+    val portraitScreenWidth = minOf(configuration.screenWidthDp, configuration.screenHeightDp)
+    val panelWidth = (portraitScreenWidth * 0.9f).dp
+
     Column(
         modifier = modifier
-            .fillMaxWidth(0.9f)
+            .width(panelWidth)
             .clip(RoundedCornerShape(16.dp))
             .background(Color(0x331E2433))
             .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(16.dp))
