@@ -33,7 +33,19 @@ fun JoystickControls(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Left Joystick (Movement, using customized colors)
+        // ---------------------------------------------------------------------------------
+        // LEFT JOYSTICK: Droid Character Movement Control
+        //
+        // This joystick demonstrates how to customize the visual appearance using solid Colors
+        // and configure dynamic settings (JoystickType and stayPut):
+        //
+        // 1. Modifier.size(160.dp) shapes the boundary area of the joystick.
+        // 2. clip(RoundedCornerShape(80.dp)) ensures touch gesture inputs are clipped/bounded.
+        // 3. type = selectedJoystickType changes restriction constraints dynamically (e.g. 2-axis, 4-axis, 8-axis).
+        // 4. stayPut = stayPutLeft controls whether the button snaps back or stays at the offset when released.
+        // 5. padColor & buttonColor provide solid customized backgrounds instead of using drawables.
+        // 6. onMove updates the viewmodel coordinates (angle, power, direction) to move the droid.
+        // ---------------------------------------------------------------------------------
         Joystick(
             modifier = Modifier
                 .size(160.dp)
@@ -47,7 +59,18 @@ fun JoystickControls(
             onMove = onMoveLeft
         )
 
-        // Right Joystick (Rotation, using drawable painters)
+        // ---------------------------------------------------------------------------------
+        // RIGHT JOYSTICK: Droid Rotation & Projectile Control
+        //
+        // This joystick demonstrates usage of custom image assets (Painters) for both the
+        // background pad and front button thumb, along with tap and double-tap gestures:
+        //
+        // 1. stayPut = true prevents the rotation from snapping back to zero when the user lets go.
+        // 2. padPainter & buttonPainter load SVG/XML custom assets to style the controls.
+        // 3. onMove updates the rotation angle in degrees, allowing the droid to face the control angle.
+        // 4. onTap handles single click events to fire a single ball.
+        // 5. onDoubleTap handles rapid double-tap events to execute a coroutine-based 5-ball rapid fire sequence.
+        // ---------------------------------------------------------------------------------
         Joystick(
             modifier = Modifier
                 .size(160.dp)

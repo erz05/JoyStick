@@ -49,6 +49,50 @@ enum class JoystickType(val value: Int) {
     TWO_AXIS_VERTICAL(44)
 }
 
+/**
+ * A highly customizable, performant, and responsive Joystick composable for Jetpack Compose.
+ *
+ * It supports various axis restrictions, customizable shapes/colors, custom drawables/painters,
+ * and built-in gesture callbacks (move, tap, and double tap).
+ *
+ * ### How to Use
+ *
+ * ```kotlin
+ * Joystick(
+ *     modifier = Modifier
+ *         .size(150.dp)
+ *         .background(Color.Gray)
+ *         .clip(CircleShape),
+ *     type = JoystickType.EIGHT_AXIS,
+ *     stayPut = false,
+ *     onMove = { angle, power, direction ->
+ *         // Handle movement
+ *         // angle (radians), power (0% - 100%), direction (enum)
+ *     },
+ *     onTap = {
+ *         // Handle tap
+ *     },
+ *     onDoubleTap = {
+ *         // Handle double tap
+ *     }
+ * )
+ * ```
+ *
+ * @param modifier The modifier to be applied to the layout. Crucial for setting the size (e.g., [Modifier.size]) of the joystick.
+ * @param type The movement restriction constraints ([JoystickType]). Defaults to [JoystickType.EIGHT_AXIS].
+ * @param stayPut If true, the thumb will stay in its last position when released. If false, it snaps back to the center.
+ * @param radiusScale Scale ratio of the button (thumb) radius relative to the total joystick radius. Range: `[0.25f, 0.50f]`.
+ * @param padColor Fallback background color of the pad if no [padPainter] is provided.
+ * @param buttonColor Fallback background color of the thumb button if no [buttonPainter] is provided.
+ * @param padPainter Custom [Painter] for drawing the background pad of the joystick.
+ * @param buttonPainter Custom [Painter] for drawing the joystick thumb button.
+ * @param onMove Callback triggered when the joystick is dragged. Receives:
+ *   - `angle` (Double): Direction angle in radians (ranging from `-PI` to `PI`).
+ *   - `power` (Double): Travel displacement percentage of the button from the center, ranging from `0.0` to `100.0`.
+ *   - `direction` (JoystickDirection): Decoded directional zone (e.g. `UP`, `DOWN_LEFT`, `CENTER`).
+ * @param onTap Optional callback triggered when the joystick is clicked (pointer down & up without dragging).
+ * @param onDoubleTap Optional callback triggered when the joystick is double-clicked.
+ */
 @Composable
 fun Joystick(
     modifier: Modifier = Modifier,
