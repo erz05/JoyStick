@@ -195,6 +195,7 @@ fun JoystickDemoScreen() {
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
+                .statusBarsPadding()
                 .padding(top = 16.dp)
                 .fillMaxWidth(0.9f)
                 .clip(RoundedCornerShape(16.dp))
@@ -335,6 +336,7 @@ fun JoystickDemoScreen() {
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
                 .padding(bottom = 32.dp, start = 16.dp, end = 16.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
